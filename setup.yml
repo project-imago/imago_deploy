@@ -6,6 +6,8 @@
   - geerlingguy.pip
 
 - import_playbook: postgresql-installed.yml
+# todo: create synapse user
 - import_playbook: synapse-installed.yml
 - import_playbook: phoenix-installed.yml
+# todo: check if run by user
 - import_playbook: front-installed.yml

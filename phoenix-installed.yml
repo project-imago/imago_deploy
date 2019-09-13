@@ -3,33 +3,82 @@
 #elixir 1.0.5
 #nodejs 0.12.5
 - hosts: phoenix
-  remote_user: root
+# todo: create phoenix user
+  # remote_user: root
   vars: 
-  - backend_root: /home/phoenix
-  - backend_path: "{{ backend_root}}/{{app_name}}"
+  - backend_path: "/home/phoenix/{{app_name}}"
 
   tasks:
-  - git:
-      repo: 'https://gitlab.com/imago-project/imago'
-      dest: {{ backend_root }}
+  - apt:
+      name:
+      # - elixir
+      - build-essential # useful ?
+      - unzip
+      - automake
+      - libncurses-dev
+      state: present
+  
 
-  - command: mix deps.get
+  - name: "install asdf"
+    git: repo="https://github.com/asdf-vm/asdf.git" dest="{{ backend_path }}/.asdf" update=no
+    # git: repo="https://github.com/asdf-vm/asdf.git" dest="{{ backend_path }}/.asdf" update=yes
+    # remote_user: "{{deployer}}"
+
+
+  - name: "source asdf in bashrc"
+    lineinfile: dest="~/.bash_profile" create=yes line="source {{ backend_path }}/.asdf/asdf.sh"
+    # remote_user: "{{deployer}}"
+
+
+  - name: "add asdf plugins"
+    command: "bash -lc 'asdf plugin-add {{item}} https://github.com/asdf-vm/asdf-{{item}}.git'"
+    with_items:
+      # - nodejs
+      - erlang
+      - elixir
+    register: asdf_add_plugins_command_result
+    failed_when: "'already added' not in asdf_add_plugins_command_result.stderr"
+
+  - name: copy list of dependences
+    copy:
+      src: .tool-versions
+      dest: "{{ backend_path }}"
+
+  - name: "install erlang and elixir with asdf plugins"
+    command: "bash -lc 'asdf install'"
+    args:
+      chdir: "{{ backend_path }}"
+    register: asdf_install_command_result
+    failed_when: "'already added' not in asdf_install_command_result.stderr"
+  # remote_user: "{{deployer}}"
+
+  - git:
+      repo: "https://gitlab.com/imago-project/imago"
+      dest: "{{ backend_path }}"
+
+  - command: "mix deps.get"
     name: Install dependencies with mix deps.get
-    chdir: "{{  backend_path }}"
+    args:
+      chdir: "{{  backend_path }}"
 
   - command: mix ecto.setup
-    name: Create and migrate your database with `mix ecto.setup` 
-    chdir: "{{  backend_path }}"
+    name: Create and migrate your database with `mix ecto.setup`
+    args:
+      chdir: "{{  backend_path }}"
+
 
   # * Create and migrate the other database
   # - command: mix ecto.create
-  #   chdir: "{{  backend_path }}"
+    # args:
+      # chdir: "{{  backend_path }}"
 
   # - npm: install
   - command: npm install
-    name: Install Node.js dependencies with cd assets 
-    chdir: "{{  backend_path }}/assets"
+    name: Install Node.js dependencies with cd assets
+    args:
+      chdir: "{{  backend_path }}/assets"
 
   - name: Start Phoenix endpoint with mix phx.server
     command: mix phx.server
-    chdir: "{{  backend_path }}"
+    args:
+      chdir: "{{  backend_path }}"

@@ -1,5 +1,6 @@
 ---
 - hosts: synapse
+# todo: create user for synapse
   vars:
     matrix_server_name: localhost
     matrix_synapse_deployment_method: pip
