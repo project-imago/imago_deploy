@@ -1,0 +1,11 @@
+---
+- hosts:
+  - postgresql
+  - synapse
+  roles:
+  - geerlingguy.pip
+
+- import_playbook: postgresql-installed.yml
+- import_playbook: synapse-installed.yml
+- import_playbook: phoenix-installed.yml
+- import_playbook: front-installed.yml

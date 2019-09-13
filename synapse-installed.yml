@@ -1,0 +1,22 @@
+---
+- hosts: synapse
+  vars:
+    matrix_server_name: localhost
+    matrix_synapse_deployment_method: pip
+    matrix_synapse_baseurl: "https://{{ matrix_server_name }}"
+    matrix_synapse_signing_key_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.signing.key"
+    # matrix_synapse_version: "v1.3.1"
+
+    matrix_synapse_pg_host: localhost
+    matrix_synapse_pg_user: "{{ dbuser }}"
+    matrix_synapse_pg_pass: "{{ dbpw }}"
+    matrix_synapse_pg_db: "{{ dbname }}"
+    matrix_synapse_report_stats: false # Report stats to matrix.org?
+    
+    matrix_synapse_extra_config:
+      no_tls: true
+
+  # pre_tasks:
+  # tasks:
+  roles:
+    - synapse

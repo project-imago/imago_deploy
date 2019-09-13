@@ -1,0 +1,17 @@
+---
+hosts: front
+vars:
+  front_path: /home/imago_front
+tasks:
+  - git:
+      repo: 'https://gitlab.com/imago-project/imago_front'
+      dest: {{ front_path }}
+      # update: yes
+# sudo echo "127.0.0.1 {{  }}" >> /etc/hosts
+# npm run server-tls
+  - name: run server
+    command: npm run server
+  # npm: name=server path={{ front_path }}
+  # - npm: name=aws-sdk path=/app/location
+  #   environment:
+  #     PATH: "{{ ansible_env.PATH }}:/opt/node/bin"

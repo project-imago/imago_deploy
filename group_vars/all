@@ -1,0 +1,4 @@
+dbname: imago-db
+dbuser: imago
+dbpw: CHANGE_ME
+app_name: imago

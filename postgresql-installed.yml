@@ -1,0 +1,11 @@
+- hosts: postgresql
+  roles:
+    - role: geerlingguy.postgresql
+      postgresql_databases:
+        - name: "{{ dbname }}"
+      postgresql_users:
+        - name: "{{ dbuser }}"
+          password: "{{ dbpw }}"
+      postgresql_global_config_options:
+        - option: listen_addresses
+          value: "*"

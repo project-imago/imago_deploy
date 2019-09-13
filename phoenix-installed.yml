@@ -1,0 +1,35 @@
+---
+#erlang 18.0
+#elixir 1.0.5
+#nodejs 0.12.5
+- hosts: phoenix
+  remote_user: root
+  vars: 
+  - backend_root: /home/phoenix
+  - backend_path: "{{ backend_root}}/{{app_name}}"
+
+  tasks:
+  - git:
+      repo: 'https://gitlab.com/imago-project/imago'
+      dest: {{ backend_root }}
+
+  - command: mix deps.get
+    name: Install dependencies with mix deps.get
+    chdir: "{{  backend_path }}"
+
+  - command: mix ecto.setup
+    name: Create and migrate your database with `mix ecto.setup` 
+    chdir: "{{  backend_path }}"
+
+  # * Create and migrate the other database
+  # - command: mix ecto.create
+  #   chdir: "{{  backend_path }}"
+
+  # - npm: install
+  - command: npm install
+    name: Install Node.js dependencies with cd assets 
+    chdir: "{{  backend_path }}/assets"
+
+  - name: Start Phoenix endpoint with mix phx.server
+    command: mix phx.server
+    chdir: "{{  backend_path }}"
