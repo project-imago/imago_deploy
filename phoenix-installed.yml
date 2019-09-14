@@ -1,99 +1,109 @@
 ---
 - hosts: phoenix
-# todo: create phoenix user and clean asdf install
+  # todo: make phoenix user do everithing and use asdf and clean asdf install
   # remote_user: root
-  vars: 
-  - backend_path: "/home/phoenix/{{app_name}}"
-  - elixir_version: 1.9
-  - elixir_bin_path: "{{ backend_path }}/.asdf/installs/elixir/1.9/bin"
-
+  vars:
+    - phoenix_user: phoenix
+    - backend_path: "/home/{{ phoenix_user }}/{{ app_name }}"
+    - elixir_version: 1.9
+    # - asdf_bin_path: "/home/{{ phoenix_user }}/.asdf/bin/asdf"
+    - asdf_bin_path: "/root/.asdf/bin/asdf"
+    - mix_bin_path: "/root/.asdf/shims/mix"
+    
+    # - elixir_bin_path: "{{ backend_path }}/.asdf/installs/elixir/1.9/bin"
   tasks:
-  - apt:
-      name:
-      # - elixir
-      - build-essential # useful ?
-      - unzip
-      - automake
-      - libncurses-dev
-      state: present
-  
+    - apt:
+        name:
+          # - elixir
+          - build-essential # useful ?
+          - unzip
+          - automake
+          - libncurses-dev
+        state: present
 
-  - name: "install asdf"
-    git: repo="https://github.com/asdf-vm/asdf.git" dest="{{ backend_path }}/.asdf" update=no
-    # git: repo="https://github.com/asdf-vm/asdf.git" dest="{{ backend_path }}/.asdf" update=yes
-    # remote_user: "{{deployer}}"
+ 
+    - name: "cloning imago repo"
+      git: 'repo="https://gitlab.com/imago-project/imago.git" dest="{{ backend_path }}"'
+    - name: "install asdf"
+      git: repo="https://github.com/asdf-vm/asdf.git" dest="{{ backend_path }}/.asdf" update=no
+      # git: repo="https://github.com/asdf-vm/asdf.git" dest="{{ backend_path }}/.asdf" update=no
+      # git: repo="https://github.com/asdf-vm/asdf.git" dest="{{ backend_path }}/.asdf" update=yes
+      
 
+    - name: "source asdf in bashrc"
+      lineinfile: dest="~/.bash_profile" create=yes line="source {{ phoenix_user }}/.asdf/asdf.sh"
+      remote_user: "{{ phoenix_user }}"
 
-  # - name: "source asdf in bashrc"
-  #   lineinfile: dest="~/.bash_profile" create=yes line="source {{ backend_path }}/.asdf/asdf.sh"
-    # remote_user: "{{deployer}}"
+    - name: "add asdf plugins"
+      command: "bash -lc 'asdf plugin-add {{item}}'"
+      # command: "bash -lc 'source {{ backend_path }}/.asdf/asdf.sh;asdf plugin-add {{item}}'"
+      with_items:
+        # - nodejs
+        - erlang
+        - elixir
+      register: asdf_add_plugins_command_result
+      failed_when: "'already added' not in asdf_add_plugins_command_result.stderr"
+      remote_user: "{{ phoenix_user }}"
 
+    - name: copy list of dependences
+      template:
+        src: .tool-versions.j2
+        dest: "{{ backend_path }}/.tool-versions"
 
-  - name: "add asdf plugins"
-    command: "bash -lc 'source {{ backend_path }}/.asdf/asdf.sh;asdf plugin-add {{item}}'"
-    with_items:
-      # - nodejs
-      - erlang
-      - elixir
-    register: asdf_add_plugins_command_result
-    failed_when: "'already added' not in asdf_add_plugins_command_result.stderr"
+    - name: "install erlang and elixir with asdf plugins"
+      command: "bash -lc 'asdf install'"
+      args:
+        chdir: "{{ backend_path }}"
+      register: asdf_install_command_result
+      # ASDF_DIR
+      # ASDF_BIN
+      # ASDF_USER_SHIMS
+      # ignore_errors: yes # TODO : error handling
+      # failed_when: "'already installed' not in asdf_install_command_result.stderr" # not foolproof
+    # remote_user: "{{phoenix_user}}"
 
-  - name: copy list of dependences
-    template:
-      src: .tool-versions.j2
-      dest: "{{ backend_path }}/.tool-versions"
-
-  - name: "install erlang and elixir with asdf plugins"
-    command: "bash -lc 'source {{ backend_path }}/.asdf/asdf.sh;asdf install'"
-    args:
-      chdir: "{{ backend_path }}"
-    register: asdf_install_command_result
-    # ASDF_DIR
-    # ASDF_BIN
-    # ASDF_USER_SHIMS
-    # ignore_errors: yes # TODO : error handling
-    # failed_when: "'already installed' not in asdf_install_command_result.stderr" # not foolproof
-  # remote_user: "{{deployer}}"
-
-  - git:
-      repo: "https://gitlab.com/imago-project/imago"
-      dest: "{{ backend_path }}"
-
-  # - command: "{{ elixir_bin_path }}/mix deps.get"
-  #   name: Install dependencies with mix deps.get
-  #   args:
-  #     chdir: "{{  backend_path }}"
-  - command: "bash -lc 'mix deps.get'"
-    name: Install dependencies with mix deps.get
-    args:
-      chdir: "{{  backend_path }}"
-
-  - command: "bash -lc 'mix ecto.setup'"
-    name: Create and migrate your database with `mix ecto.setup`
-    args:
-      chdir: "{{  backend_path }}"
-  # - command: "{{ elixir_bin_path }}/mix ecto.setup"
-  #   name: Create and migrate your database with `mix ecto.setup`
-  #   args:
-  #     chdir: "{{  backend_path }}"
+    # - name: "register mix bin path"
+      # command: "bash -lc 'which mix'"
+      # shell: "bash -lc 'which mix'"
+      # remote_user: "{{ phoenix_user }}"
+      # register: mix_bin_path
 
 
-  # * Create and migrate the other database
-  # - command: mix ecto.create
+
+    - command: "{{ mix_bin_path }} deps.get"
+      name: Install dependencies with mix deps.get
+      args:
+        chdir: "{{  backend_path }}"
+    # - command: "bash -lc 'mix deps.get'"
+    #   name: Install dependencies with mix deps.get
+    #   args:
+    #     chdir: "{{  backend_path }}"
+
+    - command: "bash -lc 'mix ecto.setup'"
+      name: Create and migrate your database with `mix ecto.setup`
+      args:
+        chdir: "{{  backend_path }}"
+    # - command: "{{ elixir_bin_path }}/mix ecto.setup"
+    #   name: Create and migrate your database with `mix ecto.setup`
+    #   args:
+    #     chdir: "{{  backend_path }}"
+
+    # * Create and migrate the other database
+    # - command: mix ecto.create
     # args:
-      # chdir: "{{  backend_path }}"
+    # chdir: "{{  backend_path }}"
 
-  # - npm: install
-  - command: npm install
-    name: Install Node.js dependencies with cd assets
-    args:
-      chdir: "{{  backend_path }}/assets"
+    # - npm: install
+    - command: npm install
+      name: Install Node.js dependencies with cd assets
+      args:
+        chdir: "{{  backend_path }}/assets"
 
-  # - name: Start Phoenix endpoint with mix phx.server
-  #   command: "{{ elixir_bin_path }}/mix phx.server"
-  #   args:
-  #     chdir: "{{  backend_path }}"
-  - name: Start Phoenix endpoint with mix phx.server
-    command: "bash -lc 'mix phx.server'"
-    args:
-      chdir: "{{  backend_path }}"
+    # - name: Start Phoenix endpoint with mix phx.server
+    #   command: "{{ elixir_bin_path }}/mix phx.server"
+    #   args:
+    #     chdir: "{{  backend_path }}"
+    - name: Start Phoenix endpoint with mix phx.server
+      command: "bash -lc 'mix phx.server'"
+      args:
+        chdir: "{{  backend_path }}"

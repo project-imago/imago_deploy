@@ -1,4 +1,8 @@
 - hosts: postgresql
+  tasks:
+  - pip:
+      name: psycopg2
+      state: present # not required. choices: absent;forcereinstall;latest;present. The state of module,The 'forcereinstall' option is only available in Ansible 2.1 and above.
   roles:
     - role: geerlingguy.postgresql
       postgresql_databases:
