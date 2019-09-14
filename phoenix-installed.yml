@@ -1,12 +1,11 @@
 ---
-#erlang 18.0
-#elixir 1.0.5
-#nodejs 0.12.5
 - hosts: phoenix
-# todo: create phoenix user
+# todo: create phoenix user and clean asdf install
   # remote_user: root
   vars: 
   - backend_path: "/home/phoenix/{{app_name}}"
+  - elixir_version: 1.9
+  - elixir_bin_path: "{{ backend_path }}/.asdf/installs/elixir/1.9/bin"
 
   tasks:
   - apt:
@@ -25,13 +24,13 @@
     # remote_user: "{{deployer}}"
 
 
-  - name: "source asdf in bashrc"
-    lineinfile: dest="~/.bash_profile" create=yes line="source {{ backend_path }}/.asdf/asdf.sh"
+  # - name: "source asdf in bashrc"
+  #   lineinfile: dest="~/.bash_profile" create=yes line="source {{ backend_path }}/.asdf/asdf.sh"
     # remote_user: "{{deployer}}"
 
 
   - name: "add asdf plugins"
-    command: "bash -lc 'asdf plugin-add {{item}} https://github.com/asdf-vm/asdf-{{item}}.git'"
+    command: "bash -lc 'source {{ backend_path }}/.asdf/asdf.sh;asdf plugin-add {{item}}'"
     with_items:
       # - nodejs
       - erlang
@@ -40,31 +39,43 @@
     failed_when: "'already added' not in asdf_add_plugins_command_result.stderr"
 
   - name: copy list of dependences
-    copy:
-      src: .tool-versions
-      dest: "{{ backend_path }}"
+    template:
+      src: .tool-versions.j2
+      dest: "{{ backend_path }}/.tool-versions"
 
   - name: "install erlang and elixir with asdf plugins"
-    command: "bash -lc 'asdf install'"
+    command: "bash -lc 'source {{ backend_path }}/.asdf/asdf.sh;asdf install'"
     args:
       chdir: "{{ backend_path }}"
     register: asdf_install_command_result
-    failed_when: "'already added' not in asdf_install_command_result.stderr"
+    # ASDF_DIR
+    # ASDF_BIN
+    # ASDF_USER_SHIMS
+    # ignore_errors: yes # TODO : error handling
+    # failed_when: "'already installed' not in asdf_install_command_result.stderr" # not foolproof
   # remote_user: "{{deployer}}"
 
   - git:
       repo: "https://gitlab.com/imago-project/imago"
       dest: "{{ backend_path }}"
 
-  - command: "mix deps.get"
+  # - command: "{{ elixir_bin_path }}/mix deps.get"
+  #   name: Install dependencies with mix deps.get
+  #   args:
+  #     chdir: "{{  backend_path }}"
+  - command: "bash -lc 'mix deps.get'"
     name: Install dependencies with mix deps.get
     args:
       chdir: "{{  backend_path }}"
 
-  - command: mix ecto.setup
+  - command: "bash -lc 'mix ecto.setup'"
     name: Create and migrate your database with `mix ecto.setup`
     args:
       chdir: "{{  backend_path }}"
+  # - command: "{{ elixir_bin_path }}/mix ecto.setup"
+  #   name: Create and migrate your database with `mix ecto.setup`
+  #   args:
+  #     chdir: "{{  backend_path }}"
 
 
   # * Create and migrate the other database
@@ -78,7 +89,11 @@
     args:
       chdir: "{{  backend_path }}/assets"
 
+  # - name: Start Phoenix endpoint with mix phx.server
+  #   command: "{{ elixir_bin_path }}/mix phx.server"
+  #   args:
+  #     chdir: "{{  backend_path }}"
   - name: Start Phoenix endpoint with mix phx.server
-    command: mix phx.server
+    command: "bash -lc 'mix phx.server'"
     args:
       chdir: "{{  backend_path }}"
