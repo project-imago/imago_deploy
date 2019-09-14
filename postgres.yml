@@ -7,9 +7,16 @@
     - role: geerlingguy.postgresql
       postgresql_databases:
         - name: "{{ dbname }}"
+        - name: "{{ eventstore_name }}"
       postgresql_users:
         - name: "{{ dbuser }}"
           password: "{{ dbpw }}"
       postgresql_global_config_options:
         - option: listen_addresses
           value: "*"
+
+
+  # username: "postgres",
+  # password: "postgres",
+  # database: "imago_dev",
+  # hostname: "localhost",

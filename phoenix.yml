@@ -1,0 +1,85 @@
+---
+- hosts: phoenix
+  # todo: make phoenix user do everithing and use asdf and clean asdf install
+  vars:
+    - phoenix_user: phoenix
+    - backend_path: "/home/{{ phoenix_user }}/{{ app_name }}"
+    - elixir_version: 1.9
+
+  remote_user: "{{ phoenix_user }}"
+
+  tasks:
+    - user:
+        name: "{{ phoenix_user }}"
+      become: yes
+
+    - apt:
+        deb: "https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb"
+      name: add erlang repo
+      become: yes
+
+    - name: install other stuff
+      apt:
+        name:
+          - unzip
+          # - build-essential # useful ?
+          # - automake
+          # - libncurses-dev
+          - esl-erlang
+          - elixir
+          - inotify-tools
+          - npm
+        state: present
+        update_cache: yes
+      become: yes
+
+    - name: "cloning imago repo"
+      git: 'repo="https://gitlab.com/imago-project/imago.git" dest="{{ backend_path }}"'
+
+    - name: "Install hex"
+      command: "mix local.hex --force"
+      args:
+        chdir: "{{  backend_path }}"
+
+    - name: "Install rebar"
+      command: "mix local.rebar --force"
+      args:
+        chdir: "{{  backend_path }}"
+
+    - command: "mix deps.get"
+      name: Install dependencies with mix deps.get
+      args:
+        chdir: "{{  backend_path }}"
+
+    - command: "mix ecto.setup"
+      name: Create and migrate your database with `mix ecto.setup` # Bug: doesn't create imago_eventstore_dev
+      args:
+        chdir: "{{  backend_path }}"
+      become: yes
+
+    - command: mix ecto.create imago_eventstore_dev
+      name: Create the eventstore database
+      args:
+        chdir: "{{  backend_path }}"
+
+    - name: Install Node.js dependencies with cd assets
+      npm:
+        path: "{{  backend_path }}/assets/"
+      become: yes
+
+    # - name: Start Phoenix endpoint with mix phx.server
+    #   command: "{{ elixir_bin_path }}/mix phx.server"
+    #   args:
+    #     chdir: "{{  backend_path }}"
+    - name: Start Phoenix endpoint with mix phx.server
+      command: "elixir --erl \"-detached\" -S mix phx.server"
+      args:
+        chdir: "{{  backend_path }}"
+      register: phoenix_status
+      # failed_when: "'already used' not in phoenix_status.stderr"
+
+    # - name: Ensure service {{ phoenix_user }} is started, based on running process elixir
+    #   service:
+    #     name: "{{ phoenix_user }}"
+    #     pattern: elixir
+    #     state: started

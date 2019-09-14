@@ -10,9 +10,11 @@
   # sudo echo "127.0.0.1 {{  }}" >> /etc/hosts
   # npm run server-tls
     - name: run server
-      command: npm run server
-      args:
-        chdir: "{{ front_path }}"
+      npm:
+        name: server
+        path: "{{ front_path }}"
+      # become: yes
+
     # npm: name=server path={{ front_path }}
     # - npm: name=aws-sdk path=/app/location
     #   environment:

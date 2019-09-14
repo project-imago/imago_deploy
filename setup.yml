@@ -5,9 +5,9 @@
   roles:
   - geerlingguy.pip
 
-- import_playbook: postgresql-installed.yml
+- import_playbook: postgres.yml
 # todo: create synapse user
-- import_playbook: synapse-installed.yml
-- import_playbook: phoenix-installed.yml
+- import_playbook: synapse.yml
+- import_playbook: phoenix.yml
 # todo: check if run by user
-- import_playbook: front-installed.yml
+- import_playbook: front.yml

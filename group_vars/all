@@ -1,4 +1,5 @@
-dbname: imago-db
-dbuser: imago
-dbpw: CHANGE_ME
-app_name: imago
+dbname: imago_dev
+eventstore_name: imago_eventstore_dev
+dbuser: postgres
+dbpw: postgres
+app_name: imago_dev
