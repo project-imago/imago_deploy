@@ -6,11 +6,14 @@
   roles:
     - role: geerlingguy.postgresql
       postgresql_databases:
-        - name: "{{ dbname }}"
+        - name: "{{ synapse_dbname }}"
+        - name: "{{ phoenix_dbname }}"
         - name: "{{ eventstore_name }}"
       postgresql_users:
-        - name: "{{ dbuser }}"
-          password: "{{ dbpw }}"
+        - name: "{{ synapse_dbuser }}"
+          password: "{{ synapse_dbpw }}"
+        - name: "{{ phoenix_dbuser }}"
+          password: "{{ phoenix_dbpw }}"
       postgresql_global_config_options:
         - option: listen_addresses
           value: "*"

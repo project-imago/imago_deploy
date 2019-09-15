@@ -1,5 +1,0 @@
-dbname: imago_dev
-eventstore_name: imago_eventstore_dev
-dbuser: postgres
-dbpw: postgres
-app_name: imago_dev

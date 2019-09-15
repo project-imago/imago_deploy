@@ -1,0 +1,16 @@
+[Unit]
+Description="Phoenix Elixir Server"
+
+[Service]
+Type=simple
+WorkingDirectory={{  backend_path }}
+ExecStart=/usr/bin/mix phx.server
+{# ExecStop= #}
+User={{ front_user }}
+Group={{ front_user }}
+Restart=always
+StandardOutput=syslog
+SyslogIdentifier=front
+
+[Install]
+WantedBy=default.target

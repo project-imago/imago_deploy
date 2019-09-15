@@ -1,0 +1,10 @@
+      app_name: imago_dev
+
+      phoenix_dbname: phoenix_imago_dev
+      eventstore_name: imago_eventstore_dev
+      phoenix_dbuser: postgres
+      phoenix_dbpw: postgres
+
+      synapse_dbname: synapse_imago_dev
+      synapse_dbuser: synapse_db
+      synapse_dbpw: synapse_db

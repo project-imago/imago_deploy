@@ -1,6 +1,6 @@
-# deploy_app:
-#   stage: deploy
-#   tags:
-#     - ansible
-#   script:
-#     - 'ansible-playbook -i staging deploy.yml'
+deploy_app:
+  stage: deploy
+  tags:
+    - ansible
+  script:
+    - 'ansible-playbook setup.yml'

@@ -1,0 +1,19 @@
+{# Change to non-root! #}
+[Unit]
+Description="Front Node.js Server"
+
+[Service]
+Type=simple
+WorkingDirectory={{ front_path }}
+{# #ExecStart={{ front_path }}/env/bin/python -m synapse.app.homeserver --config-path={{ front_path }}/homeserver.yaml #}
+ExecStart=/usr/bin/npm run server
+{# #ExecStop=/usr/bin/npm stop #}
+{# #User={{ front_user }} #}
+User=root
+Group={{ front_user }}
+Restart=always
+StandardOutput=syslog
+SyslogIdentifier=front
+
+[Install]
+WantedBy=default.target

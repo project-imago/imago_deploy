@@ -1,21 +1,119 @@
 ---
 - hosts: front
+# TODO: make it run not w/ root!!
   vars:
+    front_user: front
     front_path: /home/front/imago_front
+  remote_user: "{{ front_user }}"
+  handlers:
+    - name: "reload systemd"
+      systemd:
+        daemon_reload: yes
+      listen: "reload systemd"
+
+    - name: "restart front"
+      service:
+        name: "front"
+        state: restarted
+        enabled: yes
+      listen: "restart front"
   tasks:
+    - user:
+        name: "{{ front_user }}"
+      become: yes
+
     - git:
         repo: "https://gitlab.com/imago-project/imago_front"
         dest: "{{ front_path }}"
+        force: yes
         # update: yes
+        
+
   # sudo echo "127.0.0.1 {{  }}" >> /etc/hosts
   # npm run server-tls
-    - name: run server
+    - name: install server
       npm:
-        name: server
         path: "{{ front_path }}"
-      # become: yes
+        state: present
+        production: no
+        
+    - name: Copy webpack config file
+      template:
+        src: "webpack.config.front.js.j2"
+        dest: "{{ front_path }}/webpack.config.js"
+      notify:
+        - "restart front"
+
+    - name: Deploy service file # RUN AS ROOT FOR DEBUG!!!
+      template:
+        src: "front.service.j2"
+        dest: "/etc/systemd/system/front.service"
+      notify:
+        - "reload systemd"
+        - "restart front"
+
+    - name: run service front
+      service:
+        enabled: yes
+        state: restarted
+        name: front
+
+    # - name: run server
+    #   command: "npm run server &"
+    #   become: yes # TODO: make it run not w/ root!!
+    #   args:
+    #     chdir: "{{ front_path }}"
+        # failed_when: "'already' not in 
+
+    # - name: Ensure service imago_front is started, based on running process node and front path argument
+    #   service:
+    #     name: "node {{ front_path }}/node_modules/.bin/"
+    #     # pattern: node {{ front_path }}/node_modules/.bin/webpack-dev-server
+    #     state: started
+    #   become: yes
+
+      # Todo : check port 9000
 
     # npm: name=server path={{ front_path }}
     # - npm: name=aws-sdk path=/app/location
     #   environment:
     #     PATH: "{{ ansible_env.PATH }}:/opt/node/bin"
+
+    #  - role: systemd-service
+    #   systemd_service:
+    #     # Service name
+    #     railsapp:
+    #       # Start the service on boot
+    #       enabled: Yes
+    #       # Execute the command with specified arguments when the service is started
+    #       exec_start: "/bin/bash -lc 'puma -C config/puma.rb'"
+    #       # Use the specified directory as current
+    #       working_directory: "/var/www/myapp"
+    #       # Run the processes under this user and group
+    #       user: "deploy"
+    #       group: "deploy"
+    #       # Restart the service only when a clean exit code or signal wasn't gotten
+    #       restart: "on-failure"
+    #       # Try to activate 'redis' if possible
+    #       wants: "redis.service"
+    #       # Activate 'postgresql' or stop working in case of failure
+    #       requires: "postgresql.service"
+    #       # multi-user.target unit prefers the service to be run
+    #       wanted_by: "multi-user.target"
+
+
+
+
+# # Restart my_app, reading supervisorctl configuration from a specified file.
+# - supervisorctl:
+#     name: my_app
+#     state: restarted
+#     config: /var/opt/my_project/supervisord.conf
+
+# # Restart my_app, connecting to supervisord with credentials and server URL.
+# - supervisorctl:
+#     name: my_app
+#     state: restarted
+#     username: test
+#     password: testpass
+#     server_url: http://localhost:9001

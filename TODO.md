@@ -1,0 +1,2 @@
+- 3 databases not 2
+- check 8008, 8448, 9000 and 4000 port in the end

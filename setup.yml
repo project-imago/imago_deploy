@@ -1,7 +1,9 @@
 ---
+
 - hosts:
   - postgresql
   - synapse
+
   roles:
   - geerlingguy.pip
 

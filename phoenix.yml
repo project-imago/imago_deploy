@@ -71,15 +71,25 @@
     #   command: "{{ elixir_bin_path }}/mix phx.server"
     #   args:
     #     chdir: "{{  backend_path }}"
-    - name: Start Phoenix endpoint with mix phx.server
-      command: "elixir --erl \"-detached\" -S mix phx.server"
-      args:
-        chdir: "{{  backend_path }}"
-      register: phoenix_status
+
+
+# - name: Deploy service file
+#   template:
+#     src: "phoenix.service.j2"
+#     dest: "/etc/systemd/system/phoenix.service"
+#   notify:
+#     - "reload systemd"
+#     - "restart phoenix"
+
+
+    # - name: Start Phoenix endpoint with mix phx.server
+    #   command: "elixir --erl \"-detached\" -S mix phx.server"
+    #   args:
+    #     chdir: "{{  backend_path }}"
+    #   register: phoenix_status
       # failed_when: "'already used' not in phoenix_status.stderr"
 
-    # - name: Ensure service {{ phoenix_user }} is started, based on running process elixir
-    #   service:
-    #     name: "{{ phoenix_user }}"
-    #     pattern: elixir
-    #     state: started
+    - name: Ensure service phoenix is started
+      service:
+        name: "phoenix"
+        state: restarted
