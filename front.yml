@@ -27,7 +27,10 @@
         dest: "{{ front_path }}"
         force: yes
         # update: yes
-        
+
+    - apt:
+        name: npm
+        state: present 
 
   # sudo echo "127.0.0.1 {{  }}" >> /etc/hosts
   # npm run server-tls

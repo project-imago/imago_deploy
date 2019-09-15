@@ -2,11 +2,31 @@
 - hosts: synapse
 # todo: create user for synapse
   vars:
+    # matrix_synapse_version: "v1.3.1"
+  # localhosts causes certificate generation bugs
+    # matrix_server_name: localhost
     matrix_server_name: imago-dev
     matrix_synapse_deployment_method: pip
     matrix_synapse_baseurl: "https://{{ matrix_server_name }}"
     matrix_synapse_signing_key_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.signing.key"
-    # matrix_synapse_version: "v1.3.1"
+    matrix_synapse_tls_cert: "-----BEGIN CERTIFICATE-----
+MIIBGTCBxAIJAJrfXHVnYB68MA0GCSqGSIb3DQEBCwUAMBQxEjAQBgNVBAMMCWlt
+YWdvLWRldjAeFw0xOTA5MTUxODQ4NDBaFw0yMDA5MTQxODQ4NDBaMBQxEjAQBgNV
+BAMMCWltYWdvLWRldjBcMA0GCSqGSIb3DQEBAQUAA0sAMEgCQQCx1eSp7GTv4eIZ
+Q1wF8fpWxDAzDrb8UnxZy/8LHsL3ipf8TkgkotdMqyJGYp6lc8Zwn3ahXe1dIp3p
+b5m7FDLNAgMBAAEwDQYJKoZIhvcNAQELBQADQQCr7nQoifVNqcyBZOut3X3U6B6x
+x1Z47puiuPS6812If2WtY4g8v7+JOaY68xxQty1QhwCJ5G7oXCttW/6rK6aN
+-----END CERTIFICATE-----"
+    matrix_synapse_tls_key: "-----BEGIN PRIVATE KEY-----
+MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEAsdXkqexk7+HiGUNc
+BfH6VsQwMw62/FJ8Wcv/Cx7C94qX/E5IJKLXTKsiRmKepXPGcJ92oV3tXSKd6W+Z
+uxQyzQIDAQABAkBVYtjvCbURRMjVznTh2eSUQpDOAxOzJTvVtdAYm8WLKvAPilBu
+XAyto/e8IWvhuF3fJVe4D7EaqH3JoK5j23CVAiEA5UgTYYz+jGRM88HLvnyAhmvk
+HGzGeop82iCSzMZssOsCIQDGjxSO71awDQNallC7LtSEd2qViuPEMPtlP8JV7cf9
+JwIgH9KJHhj7m3CwXYSgSqftDrsaxfcy9P8TpRKwTUuc+lECIH7W3dIlECJsXa0b
+grzgQH/SbPLUg4VLqPxXy4Pq3qtXAiEAuRaKmoJwdOB4/AufjsTVNSIDKI+xNfhY
+HBCZgap7bBo=
+-----END PRIVATE KEY-----"
 
     matrix_synapse_pg_host: localhost
     matrix_synapse_pg_user: "{{ synapse_dbuser }}"
@@ -14,8 +34,8 @@
     matrix_synapse_pg_db: "{{ synapse_dbname }}"
     matrix_synapse_report_stats: false # Report stats to matrix.org?
     
-    # matrix_synapse_extra_config: # This disables port 8448
-      # no_tls: true 
+    matrix_synapse_extra_config: # no_tls:true disables port 8448
+      no_tls: false 
 
   # pre_tasks:
   # tasks:
