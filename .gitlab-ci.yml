@@ -1,15 +1,16 @@
 stages:
-  - ansible-lint
+  # - ansible-lint
   - deploy_app
 
-ansible-lint:
-  only:
-      - master
-  stage: ansible-lint
-  image: yokogawa/ansible-lint
-  allow_failure: true
-  script:
-    - 'ansible-lint setup.yml'
+# ansible-lint:
+#   only:
+#       - master
+#   stage: ansible-lint
+#   image: yokogawa/ansible-lint
+#   allow_failure: true
+#   script:
+
+  # - 'ansible-lint setup.yml'
 
 deploy_app:
   only:
@@ -23,4 +24,4 @@ deploy_app:
 # sudo apt-add-repository --yes --update ppa:ansible/ansible
 # sudo apt install ansible
 
-    - 'ansible-playbook -i gitlab-ci-inventory.yml setup.yml'
+    - 'ansible-playbook -i gitlab-ci-inventory.ini setup.yml'
