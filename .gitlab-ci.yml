@@ -1,14 +1,19 @@
 stages:
-  # - ansible-lint
+  - ansible-lint
   - deploy_app
 
 ansible-lint:
+  only:
+      - master
   stage: ansible-lint
   image: yokogawa/ansible-lint
+  allow_failure: true
   script:
     - 'ansible-lint setup.yml'
 
 deploy_app:
+  only:
+      - master
   stage: deploy_app
   image: ansible/ansible
   script:
