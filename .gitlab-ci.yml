@@ -1,5 +1,5 @@
 stages:
-  - ansible-lint
+  # - ansible-lint
   - deploy_app
 
 ansible-lint:
