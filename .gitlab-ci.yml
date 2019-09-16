@@ -1,6 +1,15 @@
+stages:
+  - ansible-lint
+  - deploy_app
+
+ansible-lint:
+  stage: ansible-lint
+  image: yokogawa/ansible-lint
+  script:
+    - 'ansible-lint setup.yml'
+
 deploy_app:
-  stage: deploy
-  tags:
-    - ansible
+  stage: deploy_app
+  image: ansible/ansible
   script:
     - 'ansible-playbook setup.yml'
