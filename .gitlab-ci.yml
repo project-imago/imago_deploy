@@ -16,12 +16,11 @@ deploy_app:
   only:
       - master
   stage: deploy_app
-  image: williamyeh/ansible:ubuntu18.04
-  # image: ubuntu:latest
+  # image: williamyeh/ansible:ubuntu18.04
+  image: ubuntu:latest
   script:
-    #  sudo apt update
-# sudo apt install software-properties-common
-# sudo apt-add-repository --yes --update ppa:ansible/ansible
-# sudo apt install ansible
-
-    - 'ansible-playbook -i gitlab-ci-inventory.ini setup.yml'
+      - sudo apt update
+      - sudo apt install software-properties-common
+      - sudo apt-add-repository --yes --update ppa:ansible/ansible
+      - sudo apt install ansible
+      - 'ansible-playbook -i gitlab-ci-inventory.ini setup.yml'
