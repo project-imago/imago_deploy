@@ -15,6 +15,7 @@ deploy_app:
   only:
       - master
   stage: deploy_app
-  image: ansible/ansible
+  image: williamyeh/ansible:ubuntu18.04
   script:
+    # - # Ansible install oneliner
     - 'ansible-playbook setup.yml'
