@@ -11,6 +11,8 @@
       systemd:
         daemon_reload: yes
       listen: "reload systemd"
+      # when: not skip_handlers
+      when: not docker_enabled
 
     - name: "restart phoenix"
       service:
@@ -18,6 +20,8 @@
         state: restarted
         enabled: yes
       listen: "restart phoenix"
+      # when: not skip_handlers
+      when: not docker_enabled
 
   remote_user: "{{ phoenix_user }}"
 

@@ -10,6 +10,8 @@
       systemd:
         daemon_reload: yes
       listen: "reload systemd"
+      when: not docker_enabled
+
 
     - name: "restart front"
       service:
@@ -17,7 +19,8 @@
         state: restarted
         enabled: yes
       listen: "restart front"
-      
+      when: not docker_enabled
+    
   tasks:
     - user:
         name: "{{ front_user }}"
@@ -55,12 +58,16 @@
       notify:
         - "reload systemd"
         - "restart front"
+      when: not docker_enabled
+
 
     - name: run service front
       service:
         enabled: yes
         state: restarted
         name: front
+      when: not docker_enabled
+
 
     # - name: run server
     #   command: "npm run server &"

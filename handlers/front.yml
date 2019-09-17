@@ -3,6 +3,8 @@ handlers:
     systemd:
       daemon_reload: yes
     listen: "reload systemd"
+    when: not docker_enabled
+
 
   - name: "restart front"
     service:
@@ -10,3 +12,4 @@ handlers:
       state: restarted
       enabled: yes
     listen: "restart front"
+    when: not docker_enabled
