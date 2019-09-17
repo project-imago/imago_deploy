@@ -8,7 +8,8 @@ module.exports = {
     },
     devtool: "source-map",
     devServer: {
-        allowedHosts: ['imago-dev.img', 'localhost', '{{ ansible_hostname }}', '{{ ansible_default_ipv4.address }}'],
+        {# allowedHosts: ['imago-dev.img', 'localhost', '{{ ansible_hostname }}', '{{ ansible_default_ipv4.address }}'], #}
+        allowedHosts: ['imago-dev.img', 'localhost', '127.0.0.1'],
         contentBase: __dirname,
         //disableHostCheck: true,
         //headers: {
