@@ -1,3 +1,4 @@
-- 3 databases not 2
-- check 8008, 8448, 9000 and 4000 port in the end
-- run front as specific user
+- add healthchecks for services at 8008, 8448, 9000 and 4000
+- add connection checks between all services
+- run front npm process as user
+- if still using docker unpriv w/ Gitlab CI : add CI specific commands to launch programs when in docker

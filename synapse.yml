@@ -9,6 +9,7 @@
     matrix_synapse_deployment_method: pip
     matrix_synapse_baseurl: "https://{{ matrix_server_name }}"
     matrix_synapse_signing_key_path: "{{ matrix_synapse_base_path }}/tls/{{ matrix_server_name }}.signing.key"
+    # Test variables, doesn't seem to be working. Maybe a hostname problem
     matrix_synapse_tls_cert: "-----BEGIN CERTIFICATE-----
 MIIBGTCBxAIJAJrfXHVnYB68MA0GCSqGSIb3DQEBCwUAMBQxEjAQBgNVBAMMCWlt
 YWdvLWRldjAeFw0xOTA5MTUxODQ4NDBaFw0yMDA5MTQxODQ4NDBaMBQxEjAQBgNV

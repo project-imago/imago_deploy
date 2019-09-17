@@ -4,6 +4,7 @@
   vars:
     - phoenix_user: phoenix
     - backend_path: "/home/{{ phoenix_user }}/{{ app_name }}"
+    - phoenix_cmd: /usr/bin/mix phx.server
     - elixir_version: 1.9
 
   handlers:
@@ -85,11 +86,6 @@
         path: "{{  backend_path }}/assets/"
       become: yes
 
-    # - name: Start Phoenix endpoint with mix phx.server
-    #   command: "{{ elixir_bin_path }}/mix phx.server"
-    #   args:
-    #     chdir: "{{  backend_path }}"
-
 
     - name: Deploy service file
       template:
@@ -98,17 +94,21 @@
       notify:
         - "reload systemd"
         - "restart phoenix"
-
-
-    # - name: Start Phoenix endpoint with mix phx.server
-    #   command: "elixir --erl \"-detached\" -S mix phx.server"
-    #   args:
-    #     chdir: "{{  backend_path }}"
-    #   register: phoenix_status
-      # failed_when: "'already used' not in phoenix_status.stderr"
+      when: not docker_enabled
 
     - name: Ensure service phoenix is started
       service:
         name: "phoenix"
         state: restarted
       when: not docker_enabled
+
+    - name: Start Phoenix endpoint with mix phx.server
+      shell: "elixir --erl \"-detached\" -S mix phx.server"
+      args:
+        chdir: "{{  backend_path }}"
+      when: docker_enabled
+    #   register: phoenix_status
+      # failed_when: "'already used' not in phoenix_status.stderr"
+
+
+

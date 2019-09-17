@@ -6,7 +6,7 @@ Description="Front Node.js Server"
 Type=simple
 WorkingDirectory={{ front_path }}
 {# #ExecStart={{ front_path }}/env/bin/python -m synapse.app.homeserver --config-path={{ front_path }}/homeserver.yaml #}
-ExecStart=/usr/bin/npm run server
+ExecStart={{ front_cmd }}
 {# #ExecStop=/usr/bin/npm stop #}
 {# #User={{ front_user }} #}
 User=root

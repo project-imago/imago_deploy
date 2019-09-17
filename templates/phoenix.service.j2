@@ -4,7 +4,7 @@ Description="Phoenix Elixir Server"
 [Service]
 Type=simple
 WorkingDirectory={{  backend_path }}
-ExecStart=/usr/bin/mix phx.server
+ExecStart={{ phoenix_cmd }}
 {# ExecStop= #}
 User={{ phoenix_user }}
 Group={{ phoenix_user }}
