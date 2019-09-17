@@ -17,7 +17,8 @@ deploy_app:
       - master
   stage: deploy_app
   # TODO: use ubuntu image to install and ansible image to exec ansible from another container in the same network
-  image: ubuntu:latest
+  image: jrei/systemd-ubuntu:latest # Requires privileged container but is able to run services
+  # image: ubuntu:latest
   # image: williamyeh/ansible:ubuntu18.04
   script:
       - apt update
