@@ -1,6 +1,7 @@
 ---
 - hosts: front
 # TODO: make it run not w/ root!!
+# + add TLS and imago-dev.img.tls.crt and imago-dev.img.tls.key
   vars:
     front_user: front
     front_path: /home/front/imago_front

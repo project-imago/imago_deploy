@@ -103,7 +103,7 @@
       when: not docker_enabled
 
     - name: Start Phoenix endpoint with mix phx.server
-      shell: "elixir --erl \"-detached\" -S mix phx.server"
+      shell: "elixir --erl \"-detached\" -S {{ phoenix_cmd }}"
       args:
         chdir: "{{  backend_path }}"
       when: docker_enabled

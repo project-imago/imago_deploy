@@ -2,3 +2,4 @@
 - add connection checks between all services
 - run front npm process as user
 - if still using docker unpriv w/ Gitlab CI : add CI specific commands to launch programs when in docker
+- make https://imago-dev.img:8448 work with adequate tls files
