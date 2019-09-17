@@ -107,3 +107,4 @@
       service:
         name: "phoenix"
         state: restarted
+      when: not docker_enabled

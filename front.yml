@@ -17,6 +17,7 @@
         state: restarted
         enabled: yes
       listen: "restart front"
+      
   tasks:
     - user:
         name: "{{ front_user }}"
