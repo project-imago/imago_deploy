@@ -38,11 +38,11 @@
           # - build-essential # useful ?
           # - automake
           # - libncurses-dev
+          - git
           - esl-erlang
           - elixir
           - inotify-tools
           - npm
-          - git
         state: present
         update_cache: yes
       become: yes
