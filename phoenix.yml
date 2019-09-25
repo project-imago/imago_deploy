@@ -13,7 +13,7 @@
         daemon_reload: yes
       listen: "reload systemd"
       # when: not skip_handlers
-      when: not docker_enabled
+      when: docker_enabled is not defined
 
     - name: "restart phoenix"
       service:
@@ -22,7 +22,7 @@
         enabled: yes
       listen: "restart phoenix"
       # when: not skip_handlers
-      when: not docker_enabled
+      when: docker_enabled is not defined
 
   remote_user: "{{ phoenix_user }}"
 
@@ -94,13 +94,13 @@
       notify:
         - "reload systemd"
         - "restart phoenix"
-      when: not docker_enabled
+      when: docker_enabled is not defined
 
     - name: Ensure service phoenix is started
       service:
         name: "phoenix"
         state: restarted
-      when: not docker_enabled
+      when: docker_enabled is not defined
 
     - name: Start Phoenix endpoint with mix phx.server
       shell: "elixir --erl \"-detached\" -S {{ phoenix_cmd }}"

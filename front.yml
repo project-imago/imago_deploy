@@ -12,7 +12,7 @@
       systemd:
         daemon_reload: yes
       listen: "reload systemd"
-      when: not docker_enabled
+      when: docker_enabled is not defined
 
 
     - name: "restart front"
@@ -21,7 +21,7 @@
         state: restarted
         enabled: yes
       listen: "restart front"
-      when: not docker_enabled
+      when: docker_enabled is not defined
     
   tasks:
     - user:
@@ -60,7 +60,7 @@
       notify:
         - "reload systemd"
         - "restart front"
-      when: not docker_enabled
+      when: docker_enabled is not defined
 
 
     - name: run service front
@@ -68,7 +68,7 @@
         enabled: yes
         state: restarted
         name: front
-      when: not docker_enabled
+      when: docker_enabled is not defined
 
 
     - name: run front server not as service
