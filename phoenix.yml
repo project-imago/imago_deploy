@@ -36,7 +36,7 @@
       name: add erlang repo
       become: yes
 
-    - name: install other stuff
+    - name: install packages required for phoenix and git
       apt:
         name:
           - unzip
