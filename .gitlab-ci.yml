@@ -10,20 +10,23 @@ stages:
 #   allow_failure: true
 #   script:
 
-  # - 'ansible-lint setup.yml'
+# - 'ansible-lint setup.yml'
 
 deploy_app:
   only:
-      - master
+    - master
   stage: deploy_app
-  # TODO: use ubuntu image to install and ansible image to exec ansible from another container in the same network
-  # Requires privileged container but is supposed to be able to run services
-  # image: jrei/systemd-ubuntu:latest 
+  # TODO: use private ubuntu w/ ansible image to not reinstall ansible at every build
+  # not working:
   # image: williamyeh/ansible:ubuntu18.04
+  # running systemd requires privileged container so instead of running services we run processes as daemons
+  # not working:
+  # image: jrei/systemd-ubuntu:latest
   image: ubuntu:latest
   script:
-      - apt update
-      - apt install --yes sudo software-properties-common
-      - apt-add-repository --yes --update ppa:ansible/ansible
-      - apt install --yes ansible
-      - 'ansible-playbook -i gitlab-ci-inventory.ini setup.yml -vv --extra-var docker_enabled=true'
+    - apt-add-repository --yes --update ppa:ansible/ansible
+    # useless?
+    # - apt update
+    # sudo is used by some roles and not installed on docker
+    - apt install --yes sudo software-properties-common  ansible
+    - "ansible-playbook -i gitlab-ci-inventory.ini setup.yml -vv --extra-var docker_enabled=true"
