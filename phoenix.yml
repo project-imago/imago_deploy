@@ -106,7 +106,7 @@
       shell: "elixir --erl \"-detached\" -S {{ phoenix_cmd }}"
       args:
         chdir: "{{  backend_path }}"
-      when: docker_enabled
+      when: docker_enabled is defined and docker_enabled
     #   register: phoenix_status
       # failed_when: "'already used' not in phoenix_status.stderr"
 
