@@ -1,0 +1,19 @@
+# alors
+# 1/ installer neo4j
+# 2/ https://neo4j.com/docs/operations-manual/current/configuration/set-initial-password/
+# 3/ systemctl start neo4j.service
+# 4/ télécharger gremlin-server, cd dedans
+# 5/ faire les modifications dans conf/ comme indiqué ici : https://stackoverflow.com/a/56977264
+# 6/ ./bin/gremlin-server.sh install com.steelbridgelabs.oss neo4j-gremlin-bolt 0.3.1
+# 7/ ./bin/gremlin-server.sh conf/gremlin-server-neo4j.yaml (foreground) ou GREMLIN_YAML=conf/gremlin-server-neo4j.yaml ./bin/gremlin-server.sh start (background)
+
+# comment tester :
+# 1/ neo4j lance son serveur HTTP sur localhost:7474, s'y connecter
+# 2/ lancer :play movie-graph, à la page 2, cliquer sur la query pour créer le graph des films
+# 3/ se connecter à la console de Imago
+# 4/
+
+# alias Gremlex.Client
+# alias Gremlex.Graph
+# {:ok, vertices} = Graph.g() |> Graph.v() |> Client.query
+# length(vertices) # doit être égal à 171
