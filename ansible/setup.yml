@@ -1,0 +1,9 @@
+---
+- hosts: all
+  tasks:
+  - name: Update repositories cache
+    apt:
+      update_cache: yes
+
+# todo: make it run by user
+- import_playbook: front.yml

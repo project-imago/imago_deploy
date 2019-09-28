@@ -1,0 +1,7 @@
+# from galaxy
+- src: geerlingguy.pip
+- src: geerlingguy.postgresql
+
+# from GitLab or other git-based scm, using git+ssh
+- src: https://gitlab.com/lucaskev/synapse
+  scm: git

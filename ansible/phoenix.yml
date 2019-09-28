@@ -1,5 +1,5 @@
 ---
-- hosts: phoenix
+- hosts: back
   # todo: make phoenix user do everithing and use asdf and clean asdf install
   vars:
     - phoenix_user: phoenix
