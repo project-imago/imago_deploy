@@ -22,11 +22,9 @@
     matrix_synapse_extra_config: # no_tls:true disables port 8448
       no_tls: false 
 
-  # pre_tasks:
-  tasks:
-    - import_tasks: back_cert.dev.yml
-      when: install_environment == 'dev'
-    - import_tasks: back_cert.prod.yml
-      when: install_environment == 'prod'
   roles:
     - synapse
+- import_playbook: back_cert.dev.yml
+  when: install_environment == 'dev'
+- import_playbook: back_cert.prod.yml
+  when: install_environment == 'prod'
