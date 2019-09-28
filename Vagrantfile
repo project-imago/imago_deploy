@@ -33,6 +33,8 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 4000, host: 4000, host_ip: "127.0.0.1"
   # config.vm.network "forwarded_port", guest: 9000, host: 9000, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 9000, host: 9000, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8182, host: 8182, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 7687, host: 7687, host_ip: "127.0.0.1"
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -47,8 +49,8 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder "repos/imago_front", "/home/front"
-  config.vm.synced_folder "repos/imago", "/home/imago"
+  config.vm.synced_folder "repos/imago_front", "/home/front/imago_front"
+  config.vm.synced_folder "repos/imago", "/home/imago/imago"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -64,6 +66,8 @@ Vagrant.configure("2") do |config|
   
   
     config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "setup.yml"
+      ansible.limit = "all"
+      ansible.playbook = "ansible/setup.yml"
+      ansible.inventory_path = "ansible/hosts.ini"
     end
 end

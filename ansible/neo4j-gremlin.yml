@@ -11,15 +11,21 @@
         url: https://debian.neo4j.org/neotechnology.gpg.key
         state: present # not required. choices: absent;present. Ensures that the key is present (added) or absent (revoked).
       
-    - cmd: echo 'deb https://debian.neo4j.org/repo stable/' | sudo tee /etc/apt/sources.list.d/neo4j.list
+    - apt_repository:
+        repo: https://debian.neo4j.org/repo stable/ # required. A source string for the repository.
+        state: present # not required. choices: absent;present. A source string state.
+        update_cache: yes # not required. Run the equivalent of C(apt-get update) when a change occurs.  Cache updates are run after making changes.
+       
+        filename: neo4j # not required. Sets the name of the source list file in sources.list.d. Defaults to a file name based on the repository source url. The .list extension will be automatically added.:
+      # echo 'https://debian.neo4j.org/repo stable/' | sudo tee /etc/apt/sources.list.d/≈.list"
     - apt:
         update_cache: yes # not required. Run the equivalent of C(apt-get update) before the operation. Can be run as part of the package installation or as a separate step.
         # deb: undefined # not required. Path to a .deb package on the remote machine.,If :// in the path, ansible will attempt to download deb before installing. (Version added 2.1)
         name: neo4j # not required. A list of package names, like C(foo), or package specifier with version, like C(foo=1.0). Name wildcards (fnmatch) like C(apt*) and version wildcards like C(foo=1.0*) are also supported.
         state: present # not required. choices: absent;build-dep;latest;
 
-    - cmd: neo4j-admin set-initial-password {{ neo4j_password }}
-      name: set-initial-password
+    - command: "neo4j-admin set-initial-password {{ neo4j_password }}"
+      
     - service:
         name: neo4j # required. Name of the service.
         state: reloaded
@@ -27,7 +33,7 @@
         # https://github.com/MrSaints/docker-gremlin-neo4j ?
 
     - unarchive:
-        dest: {{ gremlin_server_path }} 
+        dest: "{{ gremlin_server_path }}"
         src: http://mirror.ibcp.fr/pub/apache/tinkerpop/3.4.3/apache-tinkerpop-gremlin-server-3.4.3-bin.zip
         remote_src: yes
         

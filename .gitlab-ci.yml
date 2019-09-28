@@ -26,4 +26,4 @@ deploy_app:
       - apt install --yes sudo software-properties-common
       - apt-add-repository --yes --update ppa:ansible/ansible
       - apt install --yes ansible
-      - 'cd ansible; ansible-playbook -i gitlab-ci-inventory.ini setup.yml -vv --extra-var docker_enabled=true'
+      - 'cd ansible; ansible-playbook -i gitlab-ci-inventory.ini setup.dev.yml -vv --extra-var docker_enabled=true'
