@@ -20,11 +20,4 @@
     matrix_synapse_report_stats: false # Report stats to matrix.org?
     
     matrix_synapse_extra_config: # no_tls:true disables port 8448
-      no_tls: false 
-
-  roles:
-    - synapse
-- import_playbook: back_cert.dev.yml
-  when: install_environment == 'dev'
-- import_playbook: back_cert.prod.yml
-  when: install_environment == 'prod'
+      no_tls: false

@@ -19,3 +19,8 @@ JwIgH9KJHhj7m3CwXYSgSqftDrsaxfcy9P8TpRKwTUuc+lECIH7W3dIlECJsXa0b
 grzgQH/SbPLUg4VLqPxXy4Pq3qtXAiEAuRaKmoJwdOB4/AufjsTVNSIDKI+xNfhY
 HBCZgap7bBo=
 -----END PRIVATE KEY-----"
+
+# # TODO : use certbot role
+# if environment== prod
+    # matrix_synapse_tls_cert: ""
+    # matrix_synapse_tls_key: ""

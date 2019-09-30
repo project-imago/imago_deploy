@@ -1,5 +1,0 @@
-# # TODO : use certbot role
-- hosts: back
-  vars:
-    matrix_synapse_tls_cert: ""
-    matrix_synapse_tls_key: ""

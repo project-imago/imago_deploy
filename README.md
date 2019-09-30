@@ -1,2 +1,2 @@
 # Imago deploy
-`vagrant up --provision`
+`vagrant up`
