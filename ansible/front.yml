@@ -57,6 +57,7 @@
       template:
         src: "front.service.j2"
         dest: "/etc/systemd/system/front.service"
+        mode: 0755
       notify:
         - "reload systemd"
         - "restart front"
