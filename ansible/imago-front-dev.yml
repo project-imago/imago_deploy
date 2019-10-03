@@ -1,5 +1,5 @@
 ---
-- hosts: front
+- hosts: imago-front-dev
 # TODO: make it run not w/ root!!
 # + add TLS and imago-dev.img.tls.crt and imago-dev.img.tls.key
   vars:

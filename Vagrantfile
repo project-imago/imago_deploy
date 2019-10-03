@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
     config.vm.provision "ansible", type: "ansible", run: "always" do |ansible|
       ansible.limit = "all"
       ansible.playbook = "ansible/setup.dev.yml"
-      ansible.inventory_path = "ansible/hosts.ini"
+      ansible.inventory_path = "ansible/hosts.dev.ini"
     end
 end
 

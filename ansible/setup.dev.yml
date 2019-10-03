@@ -31,5 +31,12 @@
     
 
 # todo: make it run by user
-- import_playbook: front.yml
-- import_playbook: back.yml
+- import_playbook: imago-front-dev.yml
+
+- import_playbook: postgres.yml
+- import_playbook: back-cert.yml
+
+# todo: create synapse user
+- import_playbook: synapse.yml
+- import_playbook: imago-dev.yml
+- import_playbook: neo4j-gremlin.yml

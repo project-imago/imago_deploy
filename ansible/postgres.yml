@@ -1,4 +1,4 @@
-- hosts: back
+- hosts: postgres
   pre_tasks:
   - pip:
       name: psycopg2

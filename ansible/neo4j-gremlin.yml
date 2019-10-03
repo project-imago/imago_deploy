@@ -1,4 +1,4 @@
-- hosts: back
+- hosts: neo4j
   vars:
     - neo4j_password: IFDSHY738YSDKQHJ
     - gremlin_server_path: /home/gremlin-server
