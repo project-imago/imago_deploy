@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: prod
   tasks:
   - name: Update repositories cache
     apt:
@@ -9,5 +9,5 @@
     install_environment: prod
 
 # todo: make it run by user
-- import_playbook: front.yml
-- import_playbook: back.yml
+- import_playbook: front.dev.yml
+- import_playbook: back.dev.yml

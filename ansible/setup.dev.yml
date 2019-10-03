@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: dev
   pre_tasks:
 
     - name: Disable IPv6
