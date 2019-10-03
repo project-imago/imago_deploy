@@ -32,7 +32,7 @@
         repo: "https://gitlab.com/imago-project/imago_front"
         dest: "{{ front_path }}"
         force: yes
-        # update: yes
+        update: no
 
     - apt:
         name: npm

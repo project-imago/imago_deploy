@@ -8,13 +8,13 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
 
-  config.vm.network "forwarded_port", guest: 8008, host: 8008, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 8448, host: 8448, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 4000, host: 4000, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 9000, host: 9000, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 8182, host: 8182, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 7687, host: 7687, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 7474, host: 7474, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8008, host: 8008
+  config.vm.network "forwarded_port", guest: 8448, host: 8448
+  config.vm.network "forwarded_port", guest: 4000, host: 4000
+  config.vm.network "forwarded_port", guest: 9000, host: 9000
+  config.vm.network "forwarded_port", guest: 8182, host: 8182
+  config.vm.network "forwarded_port", guest: 7687, host: 7687
+  config.vm.network "forwarded_port", guest: 7474, host: 7474
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -39,3 +39,11 @@ Vagrant.configure("2") do |config|
       ansible.inventory_path = "ansible/hosts.ini"
     end
 end
+
+
+# echo  "Disabling IPv6"
+# echo "net.ipv6.conf.all.disable_ipv6 = 1
+#       net.ipv6.conf.default.disable_ipv6 = 1
+#       net.ipv6.conf.lo.disable_ipv6 = 1
+#       net.ipv6.conf.eth0.disable_ipv6 = 1" >> /etc/sysctl.conf
+# sysctl -p

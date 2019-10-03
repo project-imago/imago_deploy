@@ -62,10 +62,18 @@
       template:
           dest: "{{ gremlin_server_path }}/conf/neo4j-bolt.properties"
           src: neo4j-bolt.properties.j2
+
     - name: install bolt
       command: "./bin/gremlin-server.sh install com.steelbridgelabs.oss neo4j-gremlin-bolt 0.3.1"
       args:
         chdir: "{{ gremlin_server_path }}"
+      register: bolt_install_result
+      failed_when: "'already installed' not in bolt_install_result.stderr"
+
+    - name: run neo4j
+      command: neo4j start
+      # become: yes
+
     - name: run the gremlin thingy
       command: ./bin/gremlin-server.sh start
       environment:

@@ -59,11 +59,14 @@
       command: "mix local.hex --force"
       args:
         chdir: "{{  backend_path }}"
+      register: hex_installed
+
 
     - name: "Install rebar"
       command: "mix local.rebar --force"
       args:
         chdir: "{{  backend_path }}"
+      register: rebar_installed
 
     - command: "mix deps.get"
       name: Install dependencies with mix deps.get
