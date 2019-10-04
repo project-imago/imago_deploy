@@ -20,13 +20,27 @@
       register: command_result
       failed_when: "'1' not in command_result.stdout"
 
-  tasks:
-  - name: Update repositories cache
-    apt:
-      update_cache: yes
-    become: yes
-  vars: 
-    - install_environment: 'dev'
+    - name: Install ntp
+    # - name: Install ntp and pip
+      apt:
+        name:
+        - ntp
+        # - pip
+        state: present
+      become: yes
+    
+    - service:
+        name: ntp
+        state: restarted
+        enabled: true
+
+    - name: Update apt
+      apt:
+        update_cache: yes
+      become: yes
+    
+  # vars: 
+  #   - install_environment: 'dev'
 
     
 

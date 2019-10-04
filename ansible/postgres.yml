@@ -1,5 +1,5 @@
 - hosts: postgres
-  pre_tasks:
+  tasks:
   - pip:
       name: psycopg2
       state: present

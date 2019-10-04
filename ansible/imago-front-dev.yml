@@ -3,10 +3,11 @@
 # TODO: make it run not w/ root!!
 # + add TLS and imago-dev.img.tls.crt and imago-dev.img.tls.key
   vars:
-    front_user: front
-    front_path: /home/front/imago_front
-    front_cmd: /usr/bin/npm run server
-  remote_user: "{{ front_user }}"
+    imago_front_user: imago_front
+    front_path: /home/{{ imago_front_user }}/imago_front
+    front_start_cmd: /usr/bin/npm run server
+    front_stop_cmd: /usr/bin/npm stop
+  remote_user: "{{ imago_front_user }}"
   handlers:
     - name: "reload systemd"
       systemd:
@@ -23,11 +24,14 @@
       listen: "restart front"
       when: docker_enabled is not defined
     
-  tasks:
+  pre_tasks:
     - user:
-        name: "{{ front_user }}"
+        name: "{{ imago_front_user }}"
+        create_home: yes
+        group: "{{ imago_front_user }}"
       become: yes
 
+  tasks:
     - git:
         repo: "https://gitlab.com/imago-project/imago_front"
         dest: "{{ front_path }}"
@@ -56,8 +60,8 @@
     - name: Deploy service file # RUN AS ROOT FOR DEBUG!!!
       template:
         src: "front.service.j2"
-        dest: "/etc/systemd/system/front.service"
-        mode: 0755
+        dest: "/lib/systemd/system/front.service"
+        mode: 0644
       notify:
         - "reload systemd"
         - "restart front"

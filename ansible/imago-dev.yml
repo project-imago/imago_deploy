@@ -26,11 +26,12 @@
 
   remote_user: "{{ phoenix_user }}"
 
-  tasks:
+  pre_tasks:
     - user:
         name: "{{ phoenix_user }}"
       become: yes
 
+  tasks:
     - apt:
         deb: "https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb"
       name: add erlang repo
@@ -77,7 +78,7 @@
       name: Create and migrate your database with `mix ecto.setup` # Bug: doesn't create imago_eventstore_dev
       args:
         chdir: "{{  backend_path }}"
-      become: yes
+      # become: yes
 
     - command: mix ecto.create imago_eventstore_dev
       name: Create the eventstore database
@@ -87,14 +88,14 @@
     - name: Install Node.js dependencies with cd assets
       npm:
         path: "{{  backend_path }}/assets/"
-      become: yes
+      # become: yes
 
 
     - name: Deploy service file
       template:
         src: "phoenix.service.j2"
-        dest: "/etc/systemd/system/phoenix.service"
-        mode: 0755
+        dest: "/lib/systemd/system/phoenix.service"
+        mode: 0644
       notify:
         - "reload systemd"
         - "restart phoenix"

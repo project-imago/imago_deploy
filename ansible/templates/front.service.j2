@@ -1,4 +1,3 @@
-{# Change to non-root! #}
 [Unit]
 Description="Front Node.js Server"
 
@@ -6,14 +5,14 @@ Description="Front Node.js Server"
 Type=simple
 WorkingDirectory={{ front_path }}
 {# #ExecStart={{ front_path }}/env/bin/python -m synapse.app.homeserver --config-path={{ front_path }}/homeserver.yaml #}
-ExecStart={{ front_cmd }}
-{# #ExecStop=/usr/bin/npm stop #}
-{# #User={{ front_user }} #}
-User=root
-Group={{ front_user }}
+ExecStart={{ front_start_cmd }}
+{# ExecStop={{ front_stop_cmd }} #}
+User={{ imago_front_user }}
+{# User=root #}
+Group={{ imago_front_user }}
 Restart=always
-StandardOutput=syslog
-SyslogIdentifier=front
+{# StandardOutput=syslog
+SyslogIdentifier=front #}
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target

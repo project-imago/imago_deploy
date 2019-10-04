@@ -8,13 +8,13 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
 
-  config.vm.network "forwarded_port", guest: 8008, host: 8008
-  config.vm.network "forwarded_port", guest: 8448, host: 8448
-  config.vm.network "forwarded_port", guest: 4000, host: 4000
-  config.vm.network "forwarded_port", guest: 9000, host: 9000
-  config.vm.network "forwarded_port", guest: 8182, host: 8182
-  config.vm.network "forwarded_port", guest: 7687, host: 7687
-  config.vm.network "forwarded_port", guest: 7474, host: 7474
+  config.vm.network "forwarded_port", guest: 8008, host: 8008, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8448, host: 8448, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 4000, host: 4000, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 9000, host: 9000, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8182, host: 8182, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 7687, host: 7687, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 7474, host: 7474, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.

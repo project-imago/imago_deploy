@@ -44,6 +44,8 @@
         dest: "/tmp/"
         src: http://mirror.ibcp.fr/pub/apache/tinkerpop/3.4.3/apache-tinkerpop-gremlin-server-3.4.3-bin.zip
         remote_src: yes
+        creates: "/tmp/apache-tinkerpop-gremlin-server-3.4.3"
+          # creates: "{{ gremlin_server_path }}"
     - copy:
         src: /tmp/apache-tinkerpop-gremlin-server-3.4.3/
         dest: "{{ gremlin_server_path }}"
@@ -68,7 +70,7 @@
       args:
         chdir: "{{ gremlin_server_path }}"
       register: bolt_install_result
-      failed_when: "'already installed' not in bolt_install_result.stderr"
+      failed_when: "bolt_install_result.rc != 0 and 'already installed' not in bolt_install_result.stderr"
 
     - name: run neo4j
       command: neo4j start
