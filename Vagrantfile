@@ -8,14 +8,13 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
 
-  config.vm.network "forwarded_port", guest: 8008, host: 8008, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 8448, host: 8448, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 4000, host: 4000, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 9000, host: 9000, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 8182, host: 8182, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 7687, host: 7687, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 7474, host: 7474, guest_ip: "127.0.0.1", host_ip: "127.0.0.1"
-
+  config.vm.network "forwarded_port", guest: 4000, host: 4000, guest_ip: "127.0.0.1", host_ip: "127.0.0.1" # imago http endpoint
+  config.vm.network "forwarded_port", guest: 7474, host: 7474, guest_ip: "127.0.0.1", host_ip: "127.0.0.1" # neo4j http gui
+  config.vm.network "forwarded_port", guest: 7687, host: 7687, guest_ip: "127.0.0.1", host_ip: "127.0.0.1" # neo4j bolt endpoint
+  config.vm.network "forwarded_port", guest: 8008, host: 8008, guest_ip: "127.0.0.1", host_ip: "127.0.0.1" # synapse http
+  config.vm.network "forwarded_port", guest: 8182, host: 8182, guest_ip: "127.0.0.1", host_ip: "127.0.0.1" # gremlin server
+  config.vm.network "forwarded_port", guest: 8448, host: 8448, guest_ip: "127.0.0.1", host_ip: "127.0.0.1" # synapse https
+  config.vm.network "forwarded_port", guest: 9000, host: 9000, guest_ip: "127.0.0.1", host_ip: "127.0.0.1" # imago_front dev server
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   config.vm.network "private_network", ip: "192.168.33.10"
@@ -24,15 +23,19 @@ Vagrant.configure("2") do |config|
   # config.vm.synced_folder "repos/imago_front", "/home/front/imago_front"
   # config.vm.synced_folder "repos/imago", "/home/imago/imago"
 
+
   config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine
-    vb.gui = true
-  
+    vb.gui = false
+
     # Customize the amount of memory on the VM:
     vb.memory = "4096"
+
+    vb.destroy_unused_network_interfaces = true
+    vb.cpus = 2
   end
-  
-  
+
+
     config.vm.provision "ansible", type: "ansible", run: "always" do |ansible|
       ansible.limit = "all"
       ansible.playbook = "ansible/setup.dev.yml"
