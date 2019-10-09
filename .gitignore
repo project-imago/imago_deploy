@@ -1,4 +1,2 @@
-.vagrant
-# roles/*
-passwords.yml
-ubuntu-bionic-18.04-cloudimg-console.log
+schemas/
+data/
