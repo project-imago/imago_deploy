@@ -1,0 +1,127 @@
+# Matrix
+  # Synapse
+  #postgres
+  # This compose file is compatible with Compose itself, it might need some
+# adjustments to run properly with stack.
+
+version: '3'
+
+services:
+
+  synapse:
+    build:
+        context: synapse
+        dockerfile: docker/Dockerfile
+    image: docker.io/matrixdotorg/synapse:latest
+    # Since synapse does not retry to connect to the database, restart upon
+    # failure
+    restart: unless-stopped
+    # Need to do it via YAML
+    # environment:
+    #   - SYNAPSE_SERVER_NAME=my.matrix.host
+    #   - SYNAPSE_REPORT_STATS=no
+    #   - SYNAPSE_ENABLE_REGISTRATION=yes
+    #   - SYNAPSE_LOG_LEVEL=INFO
+    #   - POSTGRES_PASSWORD=changeme
+    volumes:
+      # You may either store all the files in a local folder
+      - ./files:/data
+      # .. or you may split this between different storage points
+      # - ./files:/data
+      # - /path/to/ssd:/data/uploads
+      # - /path/to/large_hdd:/data/media
+    depends_on:
+      - db
+    # In order to expose Synapse, remove one of the following, you might for
+    # instance expose the TLS port directly:
+    ports:
+      - 8448:8448/tcp
+    # ... or use a reverse proxy, here is an example for traefik:
+    # labels:
+    #   - traefik.enable=true
+    #   - traefik.frontend.rule=Host:my.matrix.Host
+    #   - traefik.port=8008
+
+  db:
+    image: docker.io/postgres:10-alpine
+    # image: postgres:10
+    # Change that password, of course!
+    environment:
+      - POSTGRES_USER=synapse
+      - POSTGRES_PASSWORD=changeme
+    volumes:
+      # You may store the database tables in a local folder..
+      - ./schemas:/var/lib/postgresql/data
+      # .. or store them on some high performance storage for better results
+      # - /path/to/ssd/storage:/var/lib/postgresql/data
+
+
+# phoenix
+
+  app:
+    image: nicbet/phoenix:1.4.10
+    build: .
+    ports:
+      - "4001:4000"
+    volumes:
+      - ./repos/imago/:/app
+    depends_on:
+      - db
+      - synapse
+      - gremlin-server
+
+# neo4j-gremlin
+
+  gremlin-server:
+    image: gremlinorm/gremlin-server-neo4j
+    container_name: gremlin-server
+    ports:
+      - "8182:8182"
+    volumes:
+      - ./data/:/data/
+      - ./gremlin-server-neo4j/conf/gremlin-server-custom.yml:/gremlin-server/conf/gremlin-server-custom.yml
+      - ./gremlin-server-neo4j/conf/neo4j.properties:/gremlin-server/conf/neo4j.properties
+      - ./gremlin-server-neo4j/scripts/neo4j.groovy:/gremlin-server/scripts/neo4j.groovy
+
+  neo4j-server:
+    image: neo4j:2.3
+    environment:
+      # - NEO4J_AUTH=neo4j/pass
+      - NEO4J_AUTH=none
+    ports:
+      - "7474:7474" # HTTP
+      - "7687:7687" # Bolt
+    depends_on: 
+      - gremlin-server
+    volumes:
+      # - ./data/copy:/data/
+      - ./data/:/data/
+
+
+# Is it useful?
+  # gremlin-console:
+  #   image: gremlinorm/gremlin-console-neo4j
+  #   volumes:
+  #     - ./data/:/data/
+  #     - ./gremlin-console-neo4j/conf/remote-docker-compose.yml:/gremlin-console/conf/remote-docker-compose.yml
+
+  # gremlin-console-with-server:
+  #   extends:
+  #     service: gremlin-console
+  #   links:
+  #     - gremlin-server
+
+# nodejs
+
+  node:
+    image: "node:8"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./repos/imago_front:/home/node/app
+    expose:
+      - "8081"
+    command: "npm run-server"
+    # command: "npm run-server-tls"
