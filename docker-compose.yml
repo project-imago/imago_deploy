@@ -13,12 +13,13 @@ services:
         context: synapse
         dockerfile: docker/Dockerfile
     image: docker.io/matrixdotorg/synapse:latest
+    # domainname: matrix.imago.local
     # Since synapse does not retry to connect to the database, restart upon
     # failure
     restart: unless-stopped
     # Need to do it via YAML
     environment:
-      - SYNAPSE_SERVER_NAME=my.matrix.host
+      - SYNAPSE_SERVER_NAME=matrix.imago.local
       - SYNAPSE_REPORT_STATS=no
       - SYNAPSE_ENABLE_REGISTRATION=no
       # - SYNAPSE_ENABLE_REGISTRATION=yes
@@ -43,6 +44,10 @@ services:
     #   - traefik.enable=true
     #   - traefik.frontend.rule=Host:my.matrix.Host
     #   - traefik.port=8008
+    networks:
+      imago:
+        aliases:
+          - matrix.imago.local
 
   db:
     image: docker.io/postgres:10-alpine
@@ -56,6 +61,10 @@ services:
       - ./schemas:/var/lib/postgresql/data
       # .. or store them on some high performance storage for better results
       # - /path/to/ssd/storage:/var/lib/postgresql/data
+    networks:
+      imago:
+        aliases:
+          - db.imago.local
 
 
 # phoenix
@@ -71,6 +80,11 @@ services:
       - db
       - synapse
       - gremlin-server
+    networks:
+      imago:
+        aliases:
+          - imago.local
+      
 
 # neo4j-gremlin
 
@@ -84,6 +98,10 @@ services:
       - ./gremlin-server-neo4j/conf/gremlin-server-custom.yml:/gremlin-server/conf/gremlin-server-custom.yml
       - ./gremlin-server-neo4j/conf/neo4j.properties:/gremlin-server/conf/neo4j.properties
       - ./gremlin-server-neo4j/scripts/neo4j.groovy:/gremlin-server/scripts/neo4j.groovy
+    networks:
+      imago:
+        aliases:
+          - gremlin.imago.local
 
   neo4j-server:
     image: neo4j:2.3
@@ -98,6 +116,10 @@ services:
     volumes:
       # - ./data/copy:/data/
       - ./data/:/data/
+    networks:
+      imago:
+        aliases:
+          - neo4j.imago.local
 
 
 # Is it useful?
@@ -127,3 +149,10 @@ services:
       - "8081"
     command: "npm run-server"
     # command: "npm run-server-tls"
+    networks:
+      imago:
+        aliases:
+          - front.imago.local
+
+networks:
+  imago:
