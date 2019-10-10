@@ -84,8 +84,7 @@ services:
 
   app:
     image: nicbet/phoenix:1.4.10
-    build: phoenix/Dockerfile
-    context: repos/imago
+    build: ./repos/imago
     ports:
       - "4001:4000"
     volumes:
@@ -152,9 +151,7 @@ services:
 # nodejs
 
   node:
-    build:
-        context: ./repos/imago_front
-        dockerfile: ../../node/Dockerfile
+    build: ./repos/imago_front
     environment:
       - NODE_ENV=development
     volumes:
