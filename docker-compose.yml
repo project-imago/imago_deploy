@@ -1,3 +1,11 @@
+# TODO: split 
+# web:
+#   extends:
+#     file: common-services.yml
+#     service: webapp
+
+#     # https://docs.docker.com/compose/extends/#understand-the-extends-configuration
+
 # Matrix
   # Synapse
   #postgres
@@ -76,7 +84,8 @@ services:
 
   app:
     image: nicbet/phoenix:1.4.10
-    build: .
+    build: phoenix/Dockerfile
+    context: repos/imago
     ports:
       - "4001:4000"
     volumes:

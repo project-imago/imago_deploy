@@ -1,6 +1,0 @@
-web:
-  extends:
-    file: common-services.yml
-    service: webapp
-
-    # https://docs.docker.com/compose/extends/#understand-the-extends-configuration
