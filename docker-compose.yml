@@ -79,12 +79,33 @@ services:
           - db.imago.local
           - db
 
+  imago_db:
+    # image: docker.io/postgres:10-alpine
+    image: postgres:12.0-alpine
+    domainname: imago_db
+
+    environment:
+      - POSTGRES_USER=postgres
+    # Change that password, of course!
+      - POSTGRES_PASSWORD=changeme
+    volumes:
+      # You may store the database tables in a local folder..
+      - ./data/imago:/var/lib/postgresql/data
+      # .. or store them on some high performance storage for better results
+      # - /path/to/ssd/storage:/var/lib/postgresql/data
+    networks:
+      imago:
+        aliases:
+          - imago_db.imago.local
+          - imago_db
+
 
 # phoenix
 
   app:
     image: nicbet/phoenix:1.4.10
     build: ./repos/imago
+    command: mix ecto.setup && mix phx.server
     ports:
       - "4001:4000"
     volumes:
@@ -93,6 +114,11 @@ services:
       - db
       - synapse
       - gremlin-server
+    environment:
+      # How many databases is it again? Should probably create 2 users, one for synapse one for elixir
+      - POSTGRES_USER=synapse
+      - POSTGRES_PASSWORD=changeme
+      
     networks:
       imago:
         aliases:
@@ -155,7 +181,7 @@ services:
     environment:
       - NODE_ENV=development
     volumes:
-      - ./repos/imago_front:/home/node/app
+      - ./repos/imago_front:/app
     expose:
       - "8081"
     command: "npm run server"
