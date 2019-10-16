@@ -17,9 +17,6 @@ version: '3'
 services:
 
   synapse:
-    build:
-        context: synapse
-        dockerfile: docker/Dockerfile
     image: docker.io/matrixdotorg/synapse:latest
     # command:  migrate_config
     # command:  generate
@@ -181,7 +178,7 @@ services:
     environment:
       - NODE_ENV=development
     volumes:
-      - ./repos/imago_front:/app
+      - ./repos/imago_front:/home/node/app
     expose:
       - "8081"
     command: "npm run server"
