@@ -16,6 +16,56 @@ version: '3'
 
 services:
 
+  # imago
+
+  imago:
+    image: nicbet/phoenix:1.4.10
+    build: ./repos/imago
+    command: mix ecto.setup && mix phx.server
+    ports:
+      - "4001:4000"
+    volumes:
+      - ./repos/imago/:/app
+    depends_on:
+      - postgres_imago
+      - synapse
+      - gremlin
+    environment:
+      # How many databases is it again? Should probably create 2 users, one for synapse one for elixir
+      - POSTGRES_HOST=postgres_imago
+      - POSTGRES_USER=imago
+      - POSTGRES_PASSWORD=postgres
+      - GREMLIN_URL="gremlin:8182/gremlin"
+      
+    networks:
+      imago:
+        aliases:
+          - api.imago.local
+      
+
+  # imago_front
+
+  imago_front:
+    build: ./repos/imago_front
+    environment:
+      - NODE_ENV=development
+      - MATRIX_URL="matrix.imago.local:8448"
+      - API_URL="api.imago.local:4001"
+    volumes:
+      - ./repos/imago_front:/home/node/app
+    expose:
+      - "8081"
+    command: "npm run server"
+    # command: "npm run server-tls"
+    networks:
+      # imago-front:
+      imago:
+        aliases:
+          - imago.local
+
+
+  # synapse
+
   synapse:
     image: docker.io/matrixdotorg/synapse:latest
     # command:  migrate_config
@@ -32,7 +82,9 @@ services:
       # - SYNAPSE_ENABLE_REGISTRATION=yes
       # - SYNAPSE_LOG_LEVEL=INFO
       - SYNAPSE_LOG_LEVEL=DEBUG
-      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_HOST=postgres_synapse
+      - POSTGRES_USER=synapse
+      - POSTGRES_PASSWORD=postgres
     volumes:
       # You may either store all the files in a local folder
       - ./synapse-files:/data
@@ -41,7 +93,7 @@ services:
       # - /path/to/ssd:/data/uploads
       # - /path/to/large_hdd:/data/media
     depends_on:
-      - db
+      - postgres_synapse
     # In order to expose Synapse, remove one of the following, you might for
     # instance expose the TLS port directly:
     ports:
@@ -56,35 +108,38 @@ services:
         aliases:
           - matrix.imago.local
 
-  db:
+
+  # postgres
+
+  postgres_synapse:
     # image: docker.io/postgres:10-alpine
     image: postgres:12.0-alpine
-    domainname: db
+    domainname: postgres_synapse
 
     environment:
       - POSTGRES_USER=synapse
     # Change that password, of course!
-      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_PASSWORD=postgres
     volumes:
       # You may store the database tables in a local folder..
-      - ./schemas:/var/lib/postgresql/data
+      - ./data/synapse:/var/lib/postgresql/data
       # .. or store them on some high performance storage for better results
       # - /path/to/ssd/storage:/var/lib/postgresql/data
     networks:
       imago:
         aliases:
-          - db.imago.local
-          - db
+          - postgres_synapse.imago.local
+          - postgres_synapse
 
-  imago_db:
+  postgres_imago:
     # image: docker.io/postgres:10-alpine
     image: postgres:12.0-alpine
-    domainname: imago_db
+    domainname: postgres_imago
 
     environment:
-      - POSTGRES_USER=postgres
+      - POSTGRES_USER=imago
     # Change that password, of course!
-      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_PASSWORD=postgres
     volumes:
       # You may store the database tables in a local folder..
       - ./data/imago:/var/lib/postgresql/data
@@ -93,40 +148,17 @@ services:
     networks:
       imago:
         aliases:
-          - imago_db.imago.local
-          - imago_db
+          - postgres_imago.imago.local
+          - postgres_imago
 
-
-# phoenix
-
-  app:
-    image: nicbet/phoenix:1.4.10
-    build: ./repos/imago
-    command: mix ecto.setup && mix phx.server
-    ports:
-      - "4001:4000"
-    volumes:
-      - ./repos/imago/:/app
-    depends_on:
-      - db
-      - synapse
-      - gremlin-server
-    environment:
-      # How many databases is it again? Should probably create 2 users, one for synapse one for elixir
-      - POSTGRES_USER=synapse
-      - POSTGRES_PASSWORD=changeme
-      
-    networks:
-      imago:
-        aliases:
-          - imago.local
-      
 
 # neo4j-gremlin
 
-  gremlin-server:
+  gremlin:
     image: gremlinorm/gremlin-server-neo4j
     # container_name: gremlin-server
+    depends_on: 
+      - neo4j
     ports:
       - "8182:8182"
     volumes:
@@ -139,7 +171,7 @@ services:
         aliases:
           - gremlin.imago.local
 
-  neo4j-server:
+  neo4j:
     image: neo4j:2.3
     environment:
       # - NEO4J_AUTH=neo4j/pass
@@ -147,8 +179,6 @@ services:
     ports:
       - "7474:7474" # HTTP
       - "7687:7687" # Bolt
-    depends_on: 
-      - gremlin-server
     volumes:
       # - ./data/copy:/data/
       - ./data/:/data/
@@ -170,24 +200,6 @@ services:
   #     service: gremlin-console
   #   links:
   #     - gremlin-server
-
-# nodejs
-
-  node:
-    build: ./repos/imago_front
-    environment:
-      - NODE_ENV=development
-    volumes:
-      - ./repos/imago_front:/home/node/app
-    expose:
-      - "8081"
-    command: "npm run server"
-    # command: "npm run server-tls"
-    networks:
-      # imago-front:
-      imago:
-        aliases:
-          - front.imago.local
 
 networks:
   imago:
