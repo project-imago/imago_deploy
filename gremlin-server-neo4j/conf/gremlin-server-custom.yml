@@ -41,10 +41,10 @@ serializers:
 processors:
   - { className: org.apache.tinkerpop.gremlin.server.op.session.SessionOpProcessor, config: { sessionTimeout: 28800000 }}
 metrics: {
-  consoleReporter: {enabled: true, interval: 180000},
-  csvReporter: {enabled: true, interval: 180000, fileName: /tmp/gremlin-server-metrics.csv},
-  jmxReporter: {enabled: true},
-  slf4jReporter: {enabled: true, interval: 180000},
+  consoleReporter: {enabled: false, interval: 7200000},
+  csvReporter: {enabled: false, interval: 180000, fileName: /tmp/gremlin-server-metrics.csv},
+  jmxReporter: {enabled: false},
+  slf4jReporter: {enabled: false, interval: 180000},
   gangliaReporter: {enabled: false, interval: 180000, addressingMode: MULTICAST},
   graphiteReporter: {enabled: false, interval: 180000}}
 strictTransactionManagement: false
@@ -55,7 +55,6 @@ maxChunkSize: 8192
 maxContentLength: 65536
 maxAccumulationBufferComponents: 1024
 resultIterationBatchSize: 64
-writeBufferHighWaterMark: 32768
 writeBufferHighWaterMark: 65536
 ssl: {
   enabled: false}

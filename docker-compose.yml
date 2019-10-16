@@ -19,13 +19,23 @@ services:
   # imago
 
   imago:
-    image: nicbet/phoenix:1.4.10
     build: ./repos/imago
     command: mix ecto.setup && mix phx.server
     ports:
       - "4001:4000"
     volumes:
-      - ./repos/imago/:/app
+      - ./repos/imago/lib:/opt/app/lib
+      - ./repos/imago/assets:/opt/app/assets
+      - ./repos/imago/priv:/opt/app/priv
+      # - type: bind
+      #   source: ./repos/imago/lib
+      #   target: /opt/app/lib
+      # - type: bind
+      #   source: ./repos/imago/assets
+      #   target: /opt/app/assets
+      # - type: bind
+      #   source: ./repos/imago/priv
+      #   target: /opt/app/priv
     depends_on:
       - postgres_imago
       - synapse
@@ -35,7 +45,7 @@ services:
       - POSTGRES_HOST=postgres_imago
       - POSTGRES_USER=imago
       - POSTGRES_PASSWORD=postgres
-      - GREMLIN_URL="gremlin:8182/gremlin"
+      - GREMLIN_URL=//gremlin:8182/gremlin
       
     networks:
       imago:
