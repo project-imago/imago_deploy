@@ -20,7 +20,7 @@ services:
 
   imago:
     build: ./repos/imago
-    command: mix ecto.setup && mix phx.server
+    hostname: api.imago.local
     ports:
       - "4001:4000"
     volumes:
@@ -46,7 +46,7 @@ services:
       - POSTGRES_USER=imago
       - POSTGRES_PASSWORD=postgres
       - GREMLIN_URL=//gremlin:8182/gremlin
-      
+      - WAIT_HOSTS=postgres_imago:5432,gremlin:8182
     networks:
       imago:
         aliases:
@@ -57,6 +57,7 @@ services:
 
   imago_front:
     build: ./repos/imago_front
+    hostname: app.imago.local
     environment:
       - NODE_ENV=development
       - MATRIX_URL="matrix.imago.local:8448"
@@ -64,23 +65,23 @@ services:
     volumes:
       - ./repos/imago_front:/home/node/app
     expose:
-      - "8081"
-    command: "npm run server"
+      - "9000"
     # command: "npm run server-tls"
     networks:
       # imago-front:
       imago:
         aliases:
-          - imago.local
+          - app.imago.local
 
 
   # synapse
 
   synapse:
     image: docker.io/matrixdotorg/synapse:latest
+    hostname: matrix.imago.local
     # command:  migrate_config
     # command:  generate
-    domainname: matrix.imago.local
+    # domainname: matrix.imago
     # Since synapse does not retry to connect to the database, restart upon
     # failure
     restart: unless-stopped
@@ -88,8 +89,7 @@ services:
     environment:
       - SYNAPSE_SERVER_NAME=matrix.imago.local
       - SYNAPSE_REPORT_STATS=no
-      - SYNAPSE_ENABLE_REGISTRATION=no
-      # - SYNAPSE_ENABLE_REGISTRATION=yes
+      - SYNAPSE_ENABLE_REGISTRATION=yes
       # - SYNAPSE_LOG_LEVEL=INFO
       - SYNAPSE_LOG_LEVEL=DEBUG
       - POSTGRES_HOST=postgres_synapse
@@ -98,6 +98,7 @@ services:
     volumes:
       # You may either store all the files in a local folder
       - ./synapse-files:/data
+      # - ./repos/imago/imago.yaml:/data/appservices/imago.yaml
       # .. or you may split this between different storage points
       # - ./files:/data
       # - /path/to/ssd:/data/uploads
@@ -107,6 +108,7 @@ services:
     # In order to expose Synapse, remove one of the following, you might for
     # instance expose the TLS port directly:
     ports:
+      - 8008:8008/tcp
       - 8448:8448/tcp
     # ... or use a reverse proxy, here is an example for traefik:
     # labels:
@@ -166,6 +168,7 @@ services:
 
   gremlin:
     image: gremlinorm/gremlin-server-neo4j
+    hostname: gremlin.imago.local
     # container_name: gremlin-server
     depends_on: 
       - neo4j
@@ -183,6 +186,7 @@ services:
 
   neo4j:
     image: neo4j:2.3
+    hostname: neo4j.imago.local
     environment:
       # - NEO4J_AUTH=neo4j/pass
       - NEO4J_AUTH=none
@@ -213,3 +217,4 @@ services:
 
 networks:
   imago:
+    driver: bridge
