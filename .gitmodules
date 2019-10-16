@@ -4,3 +4,6 @@
 [submodule "repos/imago"]
 	path = repos/imago
 	url = git@gitlab.com:imago-project/imago.git
+[submodule "ansible/roles/synapse"]
+	path = ansible/roles/synapse
+	url = https://gitlab.com/lucaskev/synapse
