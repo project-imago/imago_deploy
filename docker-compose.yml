@@ -50,6 +50,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - GREMLIN_URL=//gremlin:8182/gremlin
       - WAIT_HOSTS=postgres_imago:5432,gremlin:8182
+      - WAIT_HOSTS_TIMEOUT=60
     networks:
       imago:
         aliases:
