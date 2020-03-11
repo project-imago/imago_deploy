@@ -16,20 +16,26 @@ version: '3'
 
 volumes:
   imago_front_deps:
+  imago_deps:
+  imago_node_deps:
 
 services:
 
   # imago
 
   imago:
-    build: ./repos/imago
+    # build: ./repos/imago
+    image: registry.gitlab.com/imago-project/imago:latest
     hostname: api.imago.local
     ports:
       - "4001:4000"
     volumes:
-      - ./repos/imago/lib:/opt/app/lib
-      - ./repos/imago/assets:/opt/app/assets
-      - ./repos/imago/priv:/opt/app/priv
+      # - ./repos/imago/lib:/opt/app/lib
+      # - ./repos/imago/assets:/opt/app/assets
+      # - ./repos/imago/priv:/opt/app/priv
+      - ./repos/imago:/home/phoenix/app:rw
+      - imago_deps:/home/node/phoenix/deps
+      - imago_node_deps:/home/node/phoenix/assets/node_modules
       # - type: bind
       #   source: ./repos/imago/lib
       #   target: /opt/app/lib
