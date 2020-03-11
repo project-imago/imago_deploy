@@ -60,7 +60,8 @@ services:
   # imago_front
 
   imago_front:
-    build: ./repos/imago_front
+    # build: ./repos/imago_front
+    image: registry.gitlab.com/imago-project/imago_front:latest
     hostname: app.imago.local
     environment:
       - NODE_ENV=development
