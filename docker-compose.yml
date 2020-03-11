@@ -83,7 +83,7 @@ services:
   # synapse
 
   synapse:
-    image: docker.io/matrixdotorg/synapse:latest
+    image: docker.io/matrixdotorg/synapse:v1.7.0
     hostname: matrix.imago.local
     # command:  migrate_config
     # command:  generate
