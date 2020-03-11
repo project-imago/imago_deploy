@@ -1,6 +1,8 @@
 # Imago deploy
 
 ```bash
+git clone gitlab.com/imago-project/imago_deploy
+git submodule update --init --recursive
 docker-compose up
 
 # Use DNS Proxy Server to make container domains accessible:
