@@ -16,8 +16,10 @@ version: '3'
 
 volumes:
   imago_front_deps:
+  imago_front_compilation_items:
   imago_deps:
   imago_node_deps:
+  imago_build_files:
 
 services:
 
@@ -33,9 +35,10 @@ services:
       # - ./repos/imago/lib:/opt/app/lib
       # - ./repos/imago/assets:/opt/app/assets
       # - ./repos/imago/priv:/opt/app/priv
-      - ./repos/imago:/home/phoenix/app:rw
-      - imago_deps:/home/node/phoenix/deps
-      - imago_node_deps:/home/node/phoenix/assets/node_modules
+      - ./repos/imago:/opt/app:rw
+      - imago_deps:/opt/app/deps
+      - imago_node_deps:/opt/app/assets/node_modules
+      - imago_build_files:/opt/app/_build
       # - type: bind
       #   source: ./repos/imago/lib
       #   target: /opt/app/lib
@@ -51,6 +54,7 @@ services:
       - gremlin
     environment:
       # How many databases is it again? Should probably create 2 users, one for synapse one for elixir
+      - MIX_ENV=dev
       - POSTGRES_HOST=postgres_imago
       - POSTGRES_USER=imago
       - POSTGRES_PASSWORD=postgres
@@ -76,6 +80,8 @@ services:
     volumes:
       - ./repos/imago_front:/home/node/app:rw
       - imago_front_deps:/home/node/app/node_modules
+      - imago_front_compilation_items:/home/node/app/lib/bs
+      - /dev/null:/home/node/app/.merlin
     expose:
       - "9000"
     # command: "npm run server-tls"
@@ -102,8 +108,8 @@ services:
       - SYNAPSE_SERVER_NAME=matrix.imago.local
       - SYNAPSE_REPORT_STATS=no
       - SYNAPSE_ENABLE_REGISTRATION=yes
-      # - SYNAPSE_LOG_LEVEL=INFO
-      - SYNAPSE_LOG_LEVEL=DEBUG
+      - SYNAPSE_LOG_LEVEL=INFO
+      # - SYNAPSE_LOG_LEVEL=DEBUG
       - POSTGRES_HOST=postgres_synapse
       - POSTGRES_USER=synapse
       - POSTGRES_PASSWORD=postgres
