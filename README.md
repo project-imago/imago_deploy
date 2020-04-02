@@ -1,7 +1,8 @@
 # Imago deploy
 
 ```bash
-git clone gitlab.com/imago-project/imago_deploy
+git clone https://gitlab.com/imago-project/imago_deploy
+cd image_deploy
 git submodule update --init --recursive
 docker-compose up
 
