@@ -51,15 +51,15 @@ services:
     depends_on:
       - postgres_imago
       - synapse
-      - gremlin
+      - orientdb
     environment:
       # How many databases is it again? Should probably create 2 users, one for synapse one for elixir
       - MIX_ENV=dev
       - POSTGRES_HOST=postgres_imago
       - POSTGRES_USER=imago
       - POSTGRES_PASSWORD=postgres
-      - GREMLIN_URL=//gremlin:8182/gremlin
-      - WAIT_HOSTS=postgres_imago:5432,gremlin:8182
+      - GREMLIN_URL=//orientdb:8182/gremlin
+      - WAIT_HOSTS=postgres_imago:5432,orientdb:8182
       - WAIT_HOSTS_TIMEOUT=60
     networks:
       imago:
@@ -182,43 +182,60 @@ services:
           - postgres_imago.imago.local
           - postgres_imago
 
+  orientdb:
+    image: orientdb:3.0-tp3
+    domainname: orientdb
+    volumes:
+      - ./data/orientdb/:/orientdb/databases
+      - ./config/orientdb/:/orientdb/config
+    environment:
+      - ORIENTDB_ROOT_PASSWORD=root
+    ports:
+      - "2424:2424"
+      - "2480:2480"
+      - "8182:8182"
+    networks:
+      imago:
+        aliases:
+          - orientdb.imago.local
+          - orientdb
 
 # neo4j-gremlin
 
-  gremlin:
-    image: gremlinorm/gremlin-server-neo4j
-    hostname: gremlin.imago.local
-    # container_name: gremlin-server
-    depends_on: 
-      - neo4j
-    ports:
-      - "8182:8182"
-    volumes:
-      - ./data/:/data/
-      - ./gremlin-server-neo4j/conf/gremlin-server-custom.yml:/gremlin-server/conf/gremlin-server-custom.yml
-      - ./gremlin-server-neo4j/conf/neo4j.properties:/gremlin-server/conf/neo4j.properties
-      - ./gremlin-server-neo4j/scripts/neo4j.groovy:/gremlin-server/scripts/neo4j.groovy
-    networks:
-      imago:
-        aliases:
-          - gremlin.imago.local
-
-  neo4j:
-    image: neo4j:2.3
-    hostname: neo4j.imago.local
-    environment:
-      # - NEO4J_AUTH=neo4j/pass
-      - NEO4J_AUTH=none
-    ports:
-      - "7474:7474" # HTTP
-      - "7687:7687" # Bolt
-    volumes:
-      # - ./data/copy:/data/
-      - ./data/:/data/
-    networks:
-      imago:
-        aliases:
-          - neo4j.imago.local
+            #   gremlin:
+            #     image: gremlinorm/gremlin-server-neo4j
+            #     hostname: gremlin.imago.local
+            #     # container_name: gremlin-server
+            #     depends_on: 
+            #       - neo4j
+            #     ports:
+            #       - "8182:8182"
+            #     volumes:
+            #       - ./data/:/data/
+            #       - ./gremlin-server-neo4j/conf/gremlin-server-custom.yml:/gremlin-server/conf/gremlin-server-custom.yml
+            #       - ./gremlin-server-neo4j/conf/neo4j.properties:/gremlin-server/conf/neo4j.properties
+            #       - ./gremlin-server-neo4j/scripts/neo4j.groovy:/gremlin-server/scripts/neo4j.groovy
+            #     networks:
+            #       imago:
+            #         aliases:
+            #           - gremlin.imago.local
+            # 
+            #   neo4j:
+            #     image: neo4j:3.5
+            #     hostname: neo4j.imago.local
+            #     environment:
+            #       # - NEO4J_AUTH=neo4j/pass
+            #       - NEO4J_AUTH=none
+            #     ports:
+            #       - "7474:7474" # HTTP
+            #       - "7687:7687" # Bolt
+            #     volumes:
+            #       # - ./data/copy:/data/
+            #       - ./data/neo4j:/data/
+            #     networks:
+            #       imago:
+            #         aliases:
+            #           - neo4j.imago.local
 
 
 # Is it useful?
