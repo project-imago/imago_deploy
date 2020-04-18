@@ -20,6 +20,8 @@ volumes:
   imago_deps:
   imago_node_deps:
   imago_build_files:
+  # blazegraph_data:
+  wdqs_data:
 
 services:
 
@@ -51,7 +53,7 @@ services:
     depends_on:
       - postgres_imago
       - synapse
-      - gremlin
+      # - gremlin
     environment:
       # How many databases is it again? Should probably create 2 users, one for synapse one for elixir
       - MIX_ENV=dev
@@ -59,7 +61,7 @@ services:
       - POSTGRES_USER=imago
       - POSTGRES_PASSWORD=postgres
       - GREMLIN_URL=//gremlin:8182/gremlin
-      - WAIT_HOSTS=postgres_imago:5432,gremlin:8182
+      - WAIT_HOSTS=postgres_imago:5432 #,gremlin:8182
       - WAIT_HOSTS_TIMEOUT=60
     networks:
       imago:
@@ -182,43 +184,68 @@ services:
           - postgres_imago.imago.local
           - postgres_imago
 
+  # blazegraph:
+  #   image: lyrasis/blazegraph:2.1.5
+  #   volumes:
+  #     - blazegraph_data:/data
+  #   networks:
+  #     imago:
+  #       aliases:
+  #         - blazegraph.imago.local
+  #         - blazegraph
+
+  wdqs:
+    image: wikibase/wdqs:0.3.10
+    volumes:
+      - wdqs_data:/wdqs/data
+    command: /runBlazegraph.sh
+    environment:
+      - WIKIBASE_HOST=www.wikidata.org
+      - WDQS_HOST=wdqs.imago.local
+      - WDQS_PORT=9999
+    networks:
+      imago:
+        aliases:
+          - wdqs.imago.local
+          - wdqs
+
 
 # neo4j-gremlin
 
-  gremlin:
-    image: gremlinorm/gremlin-server-neo4j
-    hostname: gremlin.imago.local
-    # container_name: gremlin-server
-    depends_on: 
-      - neo4j
-    ports:
-      - "8182:8182"
-    volumes:
-      - ./data/:/data/
-      - ./gremlin-server-neo4j/conf/gremlin-server-custom.yml:/gremlin-server/conf/gremlin-server-custom.yml
-      - ./gremlin-server-neo4j/conf/neo4j.properties:/gremlin-server/conf/neo4j.properties
-      - ./gremlin-server-neo4j/scripts/neo4j.groovy:/gremlin-server/scripts/neo4j.groovy
-    networks:
-      imago:
-        aliases:
-          - gremlin.imago.local
-
-  neo4j:
-    image: neo4j:2.3
-    hostname: neo4j.imago.local
-    environment:
-      # - NEO4J_AUTH=neo4j/pass
-      - NEO4J_AUTH=none
-    ports:
-      - "7474:7474" # HTTP
-      - "7687:7687" # Bolt
-    volumes:
-      # - ./data/copy:/data/
-      - ./data/:/data/
-    networks:
-      imago:
-        aliases:
-          - neo4j.imago.local
+            #  gremlin:
+            #    image: gremlinorm/gremlin-server-neo4j
+            #    hostname: gremlin.imago.local
+            #    # container_name: gremlin-server
+            #    depends_on: 
+            #      - neo4j
+            #    ports:
+            #      - "8182:8182"
+            #    volumes:
+            #      - ./data/:/data/
+            #      - ./gremlin-server-neo4j/conf/gremlin-server-custom.yml:/gremlin-server/conf/gremlin-server-custom.yml
+            #      - ./gremlin-server-neo4j/conf/neo4j.properties:/gremlin-server/conf/neo4j.properties
+            #      - ./gremlin-server-neo4j/scripts/neo4j.groovy:/gremlin-server/scripts/neo4j.groovy
+            #    networks:
+            #      imago:
+            #        aliases:
+            #          - gremlin.imago.local
+            #
+            #  neo4j:
+            #    image: neo4j:2.3
+            #    hostname: neo4j.imago.local
+            #    environment:
+            #      # - NEO4J_AUTH=neo4j/pass
+            #      - NEO4J_AUTH=none
+            #    ports:
+            #      - "7474:7474" # HTTP
+            #      - "7687:7687" # Bolt
+            #    volumes:
+            #      # - ./data/copy:/data/
+            #      - ./data/:/data/
+            #    networks:
+            #      imago:
+            #        aliases:
+            #          - neo4j.imago.local
 
 
 # Is it useful?
