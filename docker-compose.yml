@@ -55,7 +55,6 @@ services:
       - synapse
       # - gremlin
     environment:
-      # How many databases is it again? Should probably create 2 users, one for synapse one for elixir
       - MIX_ENV=dev
       - POSTGRES_HOST=postgres_imago
       - POSTGRES_USER=imago
@@ -86,6 +85,8 @@ services:
       - /dev/null:/home/node/app/.merlin
     expose:
       - "9000"
+    ports:
+      - 9000:9000
     # command: "npm run server-tls"
     networks:
       # imago-front:

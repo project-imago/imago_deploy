@@ -19,5 +19,6 @@ Should give these routes:
 - Front-End: http://app.imago.local:9000
 - Back-End: http://api.imago.local:4000
 - Matrix Server: https://matrix.imago.local:8448
-- Neo4J Dashboard: http://neo4j.imago.local:7474
+- Wikibase WDQS: wdqs.imago.local:9999
+<!-- - Neo4J Dashboard: http://neo4j.imago.local:7474 -->
 
