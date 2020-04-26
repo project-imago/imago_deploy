@@ -32,7 +32,7 @@ services:
     image: registry.gitlab.com/imago-project/imago:latest
     hostname: api.imago.local
     ports:
-      - "4001:4000"
+      - "4000:4000"
     volumes:
       # - ./repos/imago/lib:/opt/app/lib
       # - ./repos/imago/assets:/opt/app/assets
@@ -78,7 +78,7 @@ services:
     environment:
       - NODE_ENV=development
       - MATRIX_URL="matrix.imago.local:8448"
-      - API_URL="api.imago.local:4001"
+      - API_URL="api.imago.local:4000"
     volumes:
       - ./repos/imago_front:/home/node/app:rw
       - imago_front_deps:/home/node/app/node_modules
@@ -87,6 +87,8 @@ services:
     expose:
       - "9000"
     # command: "npm run server-tls"
+    ports:
+      - "9000:9000"
     networks:
       # imago-front:
       imago:

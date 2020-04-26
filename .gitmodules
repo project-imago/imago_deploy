@@ -1,6 +1,6 @@
 [submodule "repos/imago_front"]
 	path = repos/imago_front
-	url = git@gitlab.com:imago-project/imago_front.git
+	url = https://gitlab.com/imago-project/imago_front.git
 [submodule "repos/imago"]
 	path = repos/imago
-	url = git@gitlab.com:imago-project/imago.git
+	url = https://gitlab.com/imago-project/imago.git
