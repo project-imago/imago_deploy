@@ -82,7 +82,7 @@ services:
     volumes:
       - ./repos/imago_front:/home/node/app:rw
       - imago_front_deps:/home/node/app/node_modules
-      - imago_front_compilation_items:/home/node/app/lib/bs
+      - imago_front_compilation_items:/home/node/app/lib
       - /dev/null:/home/node/app/.merlin
     expose:
       - "9000"
