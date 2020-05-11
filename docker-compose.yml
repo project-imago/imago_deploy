@@ -17,10 +17,16 @@ version: '3'
 volumes:
   imago_front_deps:
   imago_front_compilation_items:
+
   imago_deps:
   imago_node_deps:
   imago_build_files:
+
+  synapse_data:
+  synapse_media_store:
+
   # blazegraph_data:
+
   wdqs_data:
 
 services:
@@ -99,7 +105,7 @@ services:
   # synapse
 
   synapse:
-    image: docker.io/matrixdotorg/synapse:v1.7.0
+    image: docker.io/matrixdotorg/synapse:v1.12.4-py3
     hostname: matrix.imago.local
     # command:  migrate_config
     # command:  generate
@@ -115,23 +121,29 @@ services:
       - SYNAPSE_LOG_LEVEL=ERROR
       # - SYNAPSE_LOG_LEVEL=INFO
       # - SYNAPSE_LOG_LEVEL=DEBUG
-      - POSTGRES_HOST=postgres_synapse
-      - POSTGRES_USER=synapse
-      - POSTGRES_PASSWORD=postgres
+      # - POSTGRES_HOST=postgres_synapse
+      # - POSTGRES_USER=synapse
+      # - POSTGRES_PASSWORD=postgres
     volumes:
       # You may either store all the files in a local folder
-      - ./synapse-files:/data
+      # - ./synapse-files:/data
+      - synapse_data:/data
+      - synapse_media_store:/data/media_store
+      - ./synapse-homeserver.yaml:/data/homeserver.yaml
+      - ./synapse-imago.yaml:/data/appservices/imago.yaml
+      # - ./synapse-signing.key:/data/matrix.imago.local.signing.key
+      # - ./synapse-log.config:/data/matrix.imago.local.log.config
       # - ./repos/imago/imago.yaml:/data/appservices/imago.yaml
       # .. or you may split this between different storage points
       # - ./files:/data
       # - /path/to/ssd:/data/uploads
       # - /path/to/large_hdd:/data/media
-    depends_on:
-      - postgres_synapse
+    # depends_on:
+    #   - postgres_synapse
     # In order to expose Synapse, remove one of the following, you might for
     # instance expose the TLS port directly:
     ports:
-      # - 8008:8008/tcp
+      - 8008:8008/tcp
       - 8448:8448/tcp
     # ... or use a reverse proxy, here is an example for traefik:
     # labels:
@@ -146,31 +158,30 @@ services:
 
   # postgres
 
-  postgres_synapse:
-    # image: docker.io/postgres:10-alpine
-    image: postgres:12.0-alpine
-    domainname: postgres_synapse
-
-    environment:
-      - POSTGRES_USER=synapse
-    # Change that password, of course!
-      - POSTGRES_PASSWORD=postgres
-    volumes:
-      # You may store the database tables in a local folder..
-      - ./data/synapse:/var/lib/postgresql/data
-      # .. or store them on some high performance storage for better results
-      # - /path/to/ssd/storage:/var/lib/postgresql/data
-    networks:
-      imago:
-        aliases:
-          - postgres_synapse.imago.local
-          - postgres_synapse
+            #  postgres_synapse:
+            #    # image: docker.io/postgres:10-alpine
+            #    image: postgres:12.0-alpine
+            #    domainname: postgres_synapse
+            #
+            #    environment:
+            #      - POSTGRES_USER=synapse
+            #    # Change that password, of course!
+            #      - POSTGRES_PASSWORD=postgres
+            #    volumes:
+            #      # You may store the database tables in a local folder..
+            #      - ./data/synapse:/var/lib/postgresql/data
+            #      # .. or store them on some high performance storage for better results
+            #      # - /path/to/ssd/storage:/var/lib/postgresql/data
+            #    networks:
+            #      imago:
+            #        aliases:
+            #          - postgres_synapse.imago.local
+            #          - postgres_synapse
 
   postgres_imago:
     # image: docker.io/postgres:10-alpine
     image: postgres:12.0-alpine
     domainname: postgres_imago
-
     environment:
       - POSTGRES_USER=imago
     # Change that password, of course!
