@@ -37,8 +37,8 @@ services:
     # build: ./repos/imago
     image: registry.gitlab.com/imago-project/imago:latest
     hostname: api.imago.local
-    ports:
-      - "4000:4000"
+    # ports:
+    #   - "4000:4000"
     volumes:
       # - ./repos/imago/lib:/opt/app/lib
       # - ./repos/imago/assets:/opt/app/assets
@@ -69,6 +69,10 @@ services:
       - GREMLIN_URL=//gremlin:8182/gremlin
       - WAIT_HOSTS=postgres_imago:5432 #,gremlin:8182
       - WAIT_HOSTS_TIMEOUT=60
+    labels:
+      - traefik.http.routers.api.entryPoints=api
+      - traefik.http.routers.api.rule=Host(`api.imago.local`)
+      # - traefik.docker.network=traefik_default
     networks:
       imago:
         aliases:
@@ -93,8 +97,13 @@ services:
     expose:
       - "9000"
     # command: "npm run server-tls"
-    ports:
-      - "9000:9000"
+    # ports:
+    #   - "9000:9000"
+    labels:
+      - traefik.http.routers.front.entryPoints=front
+      - traefik.http.routers.front.rule=Host(`app.imago.local`)
+      - traefik.http.services.front.loadbalancer.server.port=9000
+      # - traefik.docker.network=traefik_default
     networks:
       # imago-front:
       imago:
@@ -142,11 +151,14 @@ services:
     #   - postgres_synapse
     # In order to expose Synapse, remove one of the following, you might for
     # instance expose the TLS port directly:
-    ports:
-      - 8008:8008/tcp
-      - 8448:8448/tcp
+    # ports:
+    #   - 8008:8008/tcp
+    #   - 8448:8448/tcp
     # ... or use a reverse proxy, here is an example for traefik:
-    # labels:
+    labels:
+      - traefik.http.routers.synapse.entryPoints=synapse
+      - traefik.http.routers.synapse.rule=Host(`matrix.imago.local`)
+      # - traefik.docker.network=traefik_default
     #   - traefik.enable=true
     #   - traefik.frontend.rule=Host:my.matrix.Host
     #   - traefik.port=8008
