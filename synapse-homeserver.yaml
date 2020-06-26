@@ -581,7 +581,7 @@ database:
 # A yaml python logging config file as described by
 # https://docs.python.org/3.7/library/logging.config.html#configuration-dictionary-schema
 #
-log_config: "/data/matrix.imago.local.log.config"
+log_config: "/data/log.config"
 
 
 ## Ratelimiting ##
@@ -1133,7 +1133,7 @@ form_secret: "1c;kt5Xrrn0N6^m~K:GvGS6u,AK~51@Gww6~YecBTkv7cF-sGk"
 
 # Path to the signing key to sign messages with
 #
-signing_key_path: "/data/matrix.imago.local.signing.key"
+signing_key_path: "/data/signing.key"
 
 # The keys that the server used to sign messages with but won't use
 # to sign new messages.

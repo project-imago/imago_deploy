@@ -21,10 +21,10 @@ services:
       - imago_build_files:/opt/app/_build
     environment:
       - MIX_ENV=prod
-      - POSTGRES_HOST=postgres_imago
-      - POSTGRES_USER=imago
-      - POSTGRES_PASSWORD=postgres
+      - DATABASE_URL=ecto://imago:postgres@postgres_imago/imago_prod
+      - SECRET_KEY_BASE=g61ec56ghZSkvqAT+93jbL+EITkTbuanV54LMhu2K5ubdELFCd9QX8fXa981CTJx
     labels:
+      - traefik.enable=true
       - traefik.http.routers.api.entryPoints=http
       - traefik.http.routers.api.rule=Path(`/api`)
       # - traefik.docker.network=traefik_default
@@ -43,6 +43,7 @@ services:
     # ports:
     #   - "9000:9000"
     labels:
+      - traefik.enable=true
       - traefik.http.routers.front.entryPoints=http
       - traefik.http.routers.front.rule=Path(`/`)
       - traefik.http.services.front.loadbalancer.server.port=80
@@ -68,6 +69,7 @@ services:
       - synapse_media_store:/data/media_store
       - ./synapse-homeserver.yaml:/data/homeserver.yaml
       - ./synapse-imago.yaml:/data/appservices/imago.yaml
+      - ./synapse-log.config:/data/log.config
       # - ./synapse-signing.key:/data/matrix.imago.local.signing.key
       # - ./synapse-log.config:/data/matrix.imago.local.log.config
       # - ./repos/imago/imago.yaml:/data/appservices/imago.yaml
@@ -128,7 +130,7 @@ services:
       - "--log.level=DEBUG"
       - "--api.insecure=true"
       - "--providers.docker=true"
-        # - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.http.address=:80"
       - "--entrypoints.https.address=:443"
       - "--entrypoints.matrix.address=:8448"
