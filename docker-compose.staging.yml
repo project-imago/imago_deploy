@@ -1,10 +1,6 @@
 version: '3'
 
 volumes:
-  imago_deps:
-  imago_node_deps:
-  imago_build_files:
-
   synapse_data:
   synapse_media_store:
 
@@ -16,17 +12,23 @@ services:
     #   - "4000:4000"
     volumes:
       - ./repos/imago:/opt/app:rw
-      - imago_deps:/opt/app/deps
-      - imago_node_deps:/opt/app/assets/node_modules
-      - imago_build_files:/opt/app/_build
     environment:
       - MIX_ENV=prod
       - DATABASE_URL=ecto://imago:postgres@postgres_imago/imago_prod
+      - WDQS_URL=http://wdqs:9999/bigdata/namespace/wdq/sparql/wdq/sparql
       - SECRET_KEY_BASE=g61ec56ghZSkvqAT+93jbL+EITkTbuanV54LMhu2K5ubdELFCd9QX8fXa981CTJx
+      - ENDPOINT_URL=alpha.imago.pm
     labels:
       - traefik.enable=true
+        # - traefik.http.middlewares.api-strip.stripprefix.prefixes=/api
       - traefik.http.routers.api.entryPoints=http
-      - traefik.http.routers.api.rule=Path(`/api`)
+      - traefik.http.routers.api.rule=Host(`alpha.imago.pm`) && PathPrefix(`/api`)
+      - traefik.http.routers.api.middlewares=https_redirect
+        # - traefik.http.routers.api.middlewares=api-strip
+      - traefik.http.routers.apis.entryPoints=https
+      - traefik.http.routers.apis.rule=Host(`alpha.imago.pm`) && PathPrefix(`/api`)
+      - traefik.http.routers.apis.tls.certresolver=myresolver
+        # - traefik.http.routers.apis.middlewares=api-strip
       # - traefik.docker.network=traefik_default
 
   imago_front:
@@ -44,9 +46,13 @@ services:
     #   - "9000:9000"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.front.entryPoints=http
-      - traefik.http.routers.front.rule=Path(`/`)
       - traefik.http.services.front.loadbalancer.server.port=80
+      - traefik.http.routers.front.entryPoints=http
+      - traefik.http.routers.front.rule=Host(`alpha.imago.pm`) && PathPrefix(`/`)
+      - traefik.http.routers.front.middlewares=https_redirect
+      - traefik.http.routers.fronts.entryPoints=https
+      - traefik.http.routers.fronts.rule=Host(`alpha.imago.pm`) && PathPrefix(`/`)
+      - traefik.http.routers.fronts.tls.certresolver=myresolver
       # - traefik.docker.network=traefik_default
 
   synapse:
@@ -68,7 +74,7 @@ services:
       - synapse_data:/data
       - synapse_media_store:/data/media_store
       - ./synapse-homeserver.yaml:/data/homeserver.yaml
-      - ./synapse-imago.yaml:/data/appservices/imago.yaml
+      - ./synapse-imago.staging.yaml:/data/appservices/imago.yaml
       - ./synapse-log.config:/data/log.config
       # - ./synapse-signing.key:/data/matrix.imago.local.signing.key
       # - ./synapse-log.config:/data/matrix.imago.local.log.config
@@ -103,7 +109,7 @@ services:
       - traefik.http.routers.https-synapse.service=synapse
       - traefik.http.routers.https-synapse.tls=true
       - traefik.http.services.synapse.loadbalancer.server.port=8008
-      - traefik.http.routers.https-synapse.tls.certResolver=le-ssl
+      - traefik.http.routers.https-synapse.tls.certResolver=myresolver
 
   postgres_imago:
     environment:
@@ -127,13 +133,16 @@ services:
   traefik:
     image: traefik:v2.2
     command:
-      - "--log.level=DEBUG"
+      - "--log.level=INFO"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.http.address=:80"
       - "--entrypoints.https.address=:443"
       - "--entrypoints.matrix.address=:8448"
+      - "--certificatesresolvers.myresolver.acme.email=pierre@pdelacroix.com"
+      - "--certificatesresolvers.myresolver.acme.storage=acme.json"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
     ports:
       - "80:80"
       - "443:443"
@@ -141,3 +150,19 @@ services:
       - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  delegation:
+    image: nginx:1.19
+    volumes:
+      - ./delegation-staging:/usr/share/nginx/html:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.delegation.entryPoints=http
+      - traefik.http.routers.delegation.rule=Host(`alpha.imago.pm`) && PathPrefix(`/.well-known/matrix`)
+      - traefik.http.routers.delegation.middlewares=https_redirect
+      - traefik.http.routers.delegation.middlewares=delegation-strip
+      - traefik.http.routers.delegations.entryPoints=https
+      - traefik.http.routers.delegations.rule=Host(`alpha.imago.pm`) && PathPrefix(`/.well-known/matrix`)
+      - traefik.http.middlewares.delegation-strip.stripprefix.prefixes=/.well-known/matrix
+      - traefik.http.routers.delegations.middlewares=delegation-strip
+      - traefik.http.routers.delegations.tls.certresolver=myresolver

@@ -28,6 +28,7 @@ services:
       - POSTGRES_HOST=postgres_imago
       - POSTGRES_USER=imago
       - POSTGRES_PASSWORD=postgres
+      - WDQS_URL=http://wdqs.imago.local:9999/bigdata/namespace/wdq/sparql/wdq/sparql
     labels:
       - traefik.http.routers.api.entryPoints=api
       - traefik.http.routers.api.rule=Host(`api.imago.local`)
@@ -75,7 +76,7 @@ services:
       - synapse_data:/data
       - synapse_media_store:/data/media_store
       - ./synapse-homeserver.yaml:/data/homeserver.yaml
-      - ./synapse-imago.yaml:/data/appservices/imago.yaml
+      - ./synapse-imago.dev.yaml:/data/appservices/imago.yaml
       # - ./synapse-signing.key:/data/matrix.imago.local.signing.key
       # - ./synapse-log.config:/data/matrix.imago.local.log.config
       # - ./repos/imago/imago.yaml:/data/appservices/imago.yaml
