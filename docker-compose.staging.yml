@@ -37,8 +37,8 @@ services:
       dockerfile: Dockerfile.prod
       args:
         - NODE_ENV=production
-        - MATRIX_URL="matrix.alpha.imago.pm"
-        - API_URL="alpha.imago.pm/api"
+        - MATRIX_URL=https://matrix.alpha.imago.pm
+        - API_URL=https://alpha.imago.pm/api
     expose:
       - 80
     # command: "npm run server-tls"
