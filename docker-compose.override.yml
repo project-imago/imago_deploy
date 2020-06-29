@@ -77,6 +77,7 @@ services:
       - synapse_media_store:/data/media_store
       - ./synapse-homeserver.yaml:/data/homeserver.yaml
       - ./synapse-imago.dev.yaml:/data/appservices/imago.yaml
+      - ./synapse-log.config:/data/log.config
       # - ./synapse-signing.key:/data/matrix.imago.local.signing.key
       # - ./synapse-log.config:/data/matrix.imago.local.log.config
       # - ./repos/imago/imago.yaml:/data/appservices/imago.yaml

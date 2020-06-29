@@ -35,10 +35,10 @@ services:
     build:
       context: ./repos/imago_front
       dockerfile: Dockerfile.prod
-    environment:
-      - NODE_ENV=production
-      - MATRIX_URL="matrix.alpha.imago.pm"
-      - API_URL="alpha.imago.pm/api"
+      args:
+        - NODE_ENV=production
+        - MATRIX_URL="matrix.alpha.imago.pm"
+        - API_URL="alpha.imago.pm/api"
     expose:
       - 80
     # command: "npm run server-tls"
