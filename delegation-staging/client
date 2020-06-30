@@ -1,5 +1,5 @@
 {
 	"m.homeserver": {
-		"base_url": "https://alpha.imago.pm"
+		"base_url": "https://matrix.alpha.imago.pm"
 	}
 }
