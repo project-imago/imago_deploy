@@ -3,7 +3,7 @@ version: '3'
 volumes:
   synapse_data:
   synapse_media_store:
-
+  postgres_imago_data:
   wdqs_data:
 
 services:
@@ -41,6 +41,8 @@ services:
         - API_URL=https://alpha.imago.pm/api
     expose:
       - 80
+    volumes:
+      - ./config/staging/imago_front_config.js:/home/node/app/dist/config.js
     # command: "npm run server-tls"
     # ports:
     #   - "9000:9000"
@@ -73,9 +75,9 @@ services:
       # - ./synapse-files:/data
       - synapse_data:/data
       - synapse_media_store:/data/media_store
-      - ./synapse-homeserver.yaml:/data/homeserver.yaml
-      - ./synapse-imago.staging.yaml:/data/appservices/imago.yaml
-      - ./synapse-log.config:/data/log.config
+      - ./config/staging/synapse-homeserver.yaml:/data/homeserver.yaml
+      - ./config/staging/synapse-imago.yaml:/data/appservices/imago.yaml
+      - ./config/staging/synapse-log.config:/data/log.config
       # - ./synapse-signing.key:/data/matrix.imago.local.signing.key
       # - ./synapse-log.config:/data/matrix.imago.local.log.config
       # - ./repos/imago/imago.yaml:/data/appservices/imago.yaml
@@ -118,7 +120,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       # You may store the database tables in a local folder..
-      - ./data/imago:/var/lib/postgresql/data
+      - postgres_imago_data:/var/lib/postgresql/data
       # .. or store them on some high performance storage for better results
       # - /path/to/ssd/storage:/var/lib/postgresql/data
 
@@ -154,7 +156,7 @@ services:
   delegation:
     image: nginx:1.19
     volumes:
-      - ./delegation-staging:/usr/share/nginx/html:ro
+      - ./config/staging/delegation-staging:/usr/share/nginx/html:ro
     labels:
       - traefik.enable=true
       - traefik.http.routers.delegation.entryPoints=http

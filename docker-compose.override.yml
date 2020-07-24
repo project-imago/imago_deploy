@@ -11,6 +11,8 @@ volumes:
   synapse_data:
   synapse_media_store:
 
+  postgres_imago_data:
+
   wdqs_data:
 
 services:
@@ -42,6 +44,7 @@ services:
       - API_URL=http://api.imago.local:4000
     volumes:
       - ./repos/imago_front:/home/node/app:rw
+      - ./config/staging/imago_front_config.js:/home/node/app/dist/config.js
       - imago_front_deps:/home/node/app/node_modules
       - imago_front_compilation_items:/home/node/app/lib
       - /dev/null:/home/node/app/.merlin
@@ -75,9 +78,9 @@ services:
       # - ./synapse-files:/data
       - synapse_data:/data
       - synapse_media_store:/data/media_store
-      - ./synapse-homeserver.yaml:/data/homeserver.yaml
-      - ./synapse-imago.dev.yaml:/data/appservices/imago.yaml
-      - ./synapse-log.config:/data/log.config
+      - ./config/dev/synapse-homeserver.yaml:/data/homeserver.yaml
+      - ./config/dev/synapse-imago.yaml:/data/appservices/imago.yaml
+      - ./config/dev/synapse-log.config:/data/log.config
       # - ./synapse-signing.key:/data/matrix.imago.local.signing.key
       # - ./synapse-log.config:/data/matrix.imago.local.log.config
       # - ./repos/imago/imago.yaml:/data/appservices/imago.yaml
@@ -108,7 +111,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       # You may store the database tables in a local folder..
-      - ./data/imago:/var/lib/postgresql/data
+      - postgres_imago_data:/var/lib/postgresql/data
       # .. or store them on some high performance storage for better results
       # - /path/to/ssd/storage:/var/lib/postgresql/data
 
