@@ -44,7 +44,7 @@ services:
       - API_URL=http://api.imago.local:4000
     volumes:
       - ./repos/imago_front:/home/node/app:rw
-      - ./config/staging/imago_front_config.js:/home/node/app/dist/config.js
+      - ./config/dev/imago_front_config.js:/home/node/app/dist/config.js:ro
       - imago_front_deps:/home/node/app/node_modules
       - imago_front_compilation_items:/home/node/app/lib
       - /dev/null:/home/node/app/.merlin

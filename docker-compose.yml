@@ -26,8 +26,3 @@ services:
   wdqs:
     image: wikibase/wdqs:0.3.10
     command: /runBlazegraph.sh
-
-
-networks:
-  imago:
-    driver: bridge
