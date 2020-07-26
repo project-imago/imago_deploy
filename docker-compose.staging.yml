@@ -10,14 +10,18 @@ services:
   imago:
     # ports:
     #   - "4000:4000"
-    volumes:
-      - ./repos/imago:/opt/app:rw
+    image: registry.gitlab.com/imago-project/imago/prod:latest
+    # volumes:
+    #   - ./repos/imago:/opt/app:rw
     environment:
       - MIX_ENV=prod
       - DATABASE_URL=ecto://imago:postgres@postgres_imago/imago_prod
       - WDQS_URL=http://wdqs:9999/bigdata/namespace/wdq/sparql/wdq/sparql
       - SECRET_KEY_BASE=g61ec56ghZSkvqAT+93jbL+EITkTbuanV54LMhu2K5ubdELFCd9QX8fXa981CTJx
       - ENDPOINT_URL=alpha.imago.pm
+      - MATRIX_URL=https://matrix.alpha.imago.pm
+      - MATRIX_AS_TOKEN=MDAyMGxvY2F0aW9uIG1hdHJpeC5pbWFnbyhsb2NhbAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmNjaWQgdXNlcl9pZCA9IEBhbGljZTptYXRyaXguaW1hZ28ubG9jYWwKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAjRC5iTWJrMEUuMU0qT0xJCjAwMmZzaWduYXR1cmUg-jGyjY9CK07mRt194p_86D6SJr1ZqrGr8YlsIW_jLtMK
+      - MATRIX_HS_TOKEN=MDAyMGxvY2F0aW9u8G1hdHJpeC5pbWFnby5sb2NhbAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAgCjAwMmNjaWQgdXNlcl9pZCA9IEBhbGljZTptYXRyaXguaW1hZ28ubG9jYWwKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBjcX4jazVTUDNeUlk2WnRECjAwMIZzaWduYXR1cmUg_K2biF-xm5ue7985RkAomVadF7yfy3UiEpH-e15m0esK
     labels:
       - traefik.enable=true
         # - traefik.http.middlewares.api-strip.stripprefix.prefixes=/api
@@ -32,13 +36,18 @@ services:
       # - traefik.docker.network=traefik_default
 
   imago_front:
-    build:
-      context: ./repos/imago_front
-      dockerfile: Dockerfile.prod
-      args:
-        - NODE_ENV=production
-        - MATRIX_URL=https://matrix.alpha.imago.pm
-        - API_URL=https://alpha.imago.pm/api
+    # build:
+    #   context: ./repos/imago_front
+    #   dockerfile: Dockerfile.prod
+    #   args:
+    #     - NODE_ENV=production
+    #     - MATRIX_URL=https://matrix.alpha.imago.pm
+    #     - API_URL=https://alpha.imago.pm/api
+    image: registry.gitlab.com/imago-project/imago_front/prod:latest
+    environment:
+      # - NODE_ENV=production
+      - MATRIX_URL=https://matrix.alpha.imago.pm
+      - API_URL=https://alpha.imago.pm/api
     expose:
       - 80
     volumes:
