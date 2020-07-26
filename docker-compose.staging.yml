@@ -51,7 +51,7 @@ services:
     expose:
       - 80
     volumes:
-      - ./config/staging/imago_front_config.js:/home/node/app/dist/config.js
+      - /root/imago_front_config.js:/usr/share/nginx/html/config.js
     # command: "npm run server-tls"
     # ports:
     #   - "9000:9000"
@@ -84,9 +84,9 @@ services:
       # - ./synapse-files:/data
       - synapse_data:/data
       - synapse_media_store:/data/media_store
-      - ./config/staging/synapse-homeserver.yaml:/data/homeserver.yaml
-      - ./config/staging/synapse-imago.yaml:/data/appservices/imago.yaml
-      - ./config/staging/synapse-log.config:/data/log.config
+      - /root/synapse-homeserver.yaml:/data/homeserver.yaml
+      - /root/synapse-imago.yaml:/data/appservices/imago.yaml
+      - /root/synapse-log.config:/data/log.config
       # - ./synapse-signing.key:/data/matrix.imago.local.signing.key
       # - ./synapse-log.config:/data/matrix.imago.local.log.config
       # - ./repos/imago/imago.yaml:/data/appservices/imago.yaml

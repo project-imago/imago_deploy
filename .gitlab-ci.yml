@@ -1,0 +1,54 @@
+stages:
+  - pull_images
+  - restart_containers
+  - migrate
+
+
+.staging:
+  image: tmaier/docker-compose:latest
+  variables:
+    DOCKER_HOST: "ssh://root@alpha.imago.pm"
+  environment:
+    name: staging
+    url: https://alpha.imago.pm
+  before_script:
+    - source gitlab-ci/auth_ssh.sh
+    - alias docker-compose='docker-compose -f docker-compose.yml -f docker-compose.staging.yml'
+
+
+Staging:Pull front-end:
+  extends: .staging
+  stage: pull_images
+  only:
+    refs:
+      - master
+      - triggers
+  script:
+    - docker-compose pull imago_front
+
+Staging:Pull back-end:
+  extends: .staging
+  stage: pull_images
+  only:
+    refs:
+      - master
+      - triggers
+  script:
+    - docker-compose pull imago
+
+Staging:Restart containers:
+  extends: .staging
+  stage: restart_containers
+  only:
+    refs:
+      - master
+      - triggers
+  script:
+    - docker-compose up -d
+
+Staging:Migrate:
+  extends: .staging
+  stage: migrate
+  needs: ["Staging:Pull back-end", "Staging:Restart containers"]
+  script:
+    - docker-compose run imago bin/imago eval "Imago.Release.migrate"
