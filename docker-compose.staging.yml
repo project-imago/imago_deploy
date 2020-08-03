@@ -25,6 +25,7 @@ services:
     labels:
       - traefik.enable=true
         # - traefik.http.middlewares.api-strip.stripprefix.prefixes=/api
+      - traefik.http.services.api.loadbalancer.server.port=4000
       - traefik.http.routers.api.entryPoints=http
       - traefik.http.routers.api.rule=Host(`alpha.imago.pm`) && PathPrefix(`/api`)
       - traefik.http.routers.api.middlewares=https_redirect
@@ -127,6 +128,7 @@ services:
       - POSTGRES_USER=imago
     # Change that password, of course!
       - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=imago_prod
     volumes:
       # You may store the database tables in a local folder..
       - postgres_imago_data:/var/lib/postgresql/data

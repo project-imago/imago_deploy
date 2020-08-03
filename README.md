@@ -5,11 +5,11 @@ git clone https://gitlab.com/imago-project/imago_deploy
 cd imago_deploy
 git submodule update --init --recursive
 docker-compose run synapse generate
-docker-compose run imago mix do ecto.setup, event_store.create, event_store.init
+docker-compose run imago ecto.setup
 docker-compose up
 
 # Use docker-hoster to make container domains accessible:
-docker run \
+docker start \
     -v /var/run/docker.sock:/tmp/docker.sock \
     -v /etc/hosts:/tmp/hosts \
     --name docker-hoster \
