@@ -1,5 +1,13 @@
 # Imago deploy
 
+## Development environment
+
+### Using Gitpod
+
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://gitlab.com/imago-project/imago_deploy)
+
+### Locally
+
 ```bash
 git clone https://gitlab.com/imago-project/imago_deploy
 cd imago_deploy

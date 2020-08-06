@@ -1,0 +1,22 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - init: |
+      git submodule update --init --recursive -- repos/imago
+      docker-compose pull imago
+      docker-compose run imago ecto.setup
+    command: docker-compose up imago
+  - init: |
+      git submodule update --init --recursive -- repos/imago_front
+      docker-compose pull imago_front
+    command: docker-compose up imago_front
+  - init: |
+      docker-compose pull
+      docker-compose run synapse generate
+    command: docker-compose up
+
+ports:
+  - port: 9000
+    onOpen: open-preview
+  - port: 8008
