@@ -4,17 +4,17 @@ image:
 tasks:
   - init: |
       git submodule update --init --recursive -- repos/imago
-      docker-compose pull imago
-      docker-compose run imago ecto.setup
-    command: docker-compose up imago
+      podman-compose pull imago
+      podman-compose run imago ecto.setup
+    command: podman-compose up imago
   - init: |
       git submodule update --init --recursive -- repos/imago_front
-      docker-compose pull imago_front
-    command: docker-compose up imago_front
+      podman-compose pull imago_front
+    command: podman-compose up imago_front
   - init: |
-      docker-compose pull
-      docker-compose run synapse generate
-    command: docker-compose up
+      podman-compose pull
+      podman-compose run synapse generate
+    command: podman-compose up
 
 ports:
   - port: 9000
