@@ -50,5 +50,9 @@ Staging:Migrate:
   extends: .staging
   stage: migrate
   needs: ["Staging:Pull back-end", "Staging:Restart containers"]
+  only:
+    refs:
+      - master
+      - triggers
   script:
     - docker-compose run imago bin/imago eval "Imago.Release.migrate"
