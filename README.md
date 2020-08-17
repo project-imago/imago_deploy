@@ -23,3 +23,7 @@ Should give these routes:
 - Matrix Server: http://matrix.imago.local:8008
 - Blazegraph WDQS: http://wdqs.imago.local:9999
 
+## Use git-over-SSH when working with submodules
+
+Submodules use HTTPS so they can be easily pulled from automated systems.
+To use SSH when contributing, follow [these instructions](https://stackoverflow.com/questions/11200237/how-do-i-get-git-to-default-to-ssh-and-not-https-for-new-repositories/36500841#36500841).
